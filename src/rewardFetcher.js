@@ -6,9 +6,6 @@ const usdcAddr = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174";
 
 export const getRewards = async (contract, account) => {
     try {
-      const { ethereum } = window;
-
-      if (ethereum) {
         const result = await contract.methods.vlPenRewardTokenPositionsOf(account).call();
 
         let totalRewards = [];
@@ -84,7 +81,6 @@ export const getRewards = async (contract, account) => {
         }
 
         return allRewards;
-      }
     } catch(err) {
       console.log(err);
     }
