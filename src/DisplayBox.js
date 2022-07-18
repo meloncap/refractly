@@ -1,7 +1,7 @@
 import React from 'react';
 import Box from '@mui/material/Box';
  
-const DisplayBox = ( {title, reward, rewardLabel, rewardAmount }) => {
+const DisplayBox = React.forwardRef((props, ref) => {
     const boxStyle={
         display:"flex",
         flexDirection:"column",
@@ -67,14 +67,14 @@ const DisplayBox = ( {title, reward, rewardLabel, rewardAmount }) => {
     }
 
     return (
-        <Box style={boxStyle}>
+        <Box {...props} style={boxStyle} ref={ref}>
             <Box style={innerBoxStyle}>
-                <p style={pStyle}>{title}</p>
-                <h2 style={h2Style}>{Number(reward).toFixed(8)} <span style={labelStyle}>{rewardLabel}</span></h2>
-                <h3 style={h3Style}>${Number(rewardAmount).toFixed(3)}</h3>
+                <p style={pStyle}>{props.header}</p>
+                <h2 style={h2Style}>{Number(props.reward).toFixed(8)} <span style={labelStyle}>{props.rewardLabel}</span></h2>
+                <h3 style={h3Style}>${Number(props.rewardAmount).toFixed(3)}</h3>
             </Box>
         </Box>
     )
-}
+})
  
 export default DisplayBox
