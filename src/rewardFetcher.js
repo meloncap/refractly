@@ -22,7 +22,7 @@ export const getRewards = async (contract, account) => {
         const poolRewards = positions.reduce((basket, rewards) => {
           for (const [, rewardData] of Object.entries(rewards.rewardTokens)) {
               if (!basket[rewardData.rewardTokenAddress]) {
-                  basket[rewardData.rewardTokenAddress] = {earned: Number(rewardData.earned)};
+                  basket[rewardData.rewardTokenAddress] = {earned: Number(0)};
               }
       
               basket[rewardData.rewardTokenAddress].earned += Number(rewardData.earned);
