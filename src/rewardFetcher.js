@@ -47,19 +47,19 @@ export const getRewards = async (contract, account) => {
 
         for (const [address, rewardData] of Object.entries(allRewards)) {
           if (address === penDystAddr) {
-            const response = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${dystAddr}`)
+            const response = await fetchNoCache(`https://api.dexscreener.com/latest/dex/tokens/${dystAddr}`)
             const data = await response.json();
             const pair = data.pairs.find(t => t.baseToken.symbol === 'DYST' && t.quoteToken.symbol === "penDYST");
             rewardData.symbol = pair.quoteToken.symbol;
             rewardData.price = Number(pair.priceUsd / pair.priceNative);
           } else if (address === usdtAddr) {
-            const response = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${usdcAddr}`)
+            const response = await fetchNoCache(`https://api.dexscreener.com/latest/dex/tokens/${usdcAddr}`)
             const data = await response.json();
             const pair = data.pairs.find(t => t.baseToken.symbol === 'USDC' && t.quoteToken.symbol === "USDT");
             rewardData.symbol = pair.quoteToken.symbol;
             rewardData.price = Number(pair.priceUsd / pair.priceNative);
           } else {
-            const response = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${address}`)
+            const response = await fetchNoCache(`https://api.dexscreener.com/latest/dex/tokens/${address}`)
             const data = await response.json();
 
             if (data.pairs.length === 0) {
@@ -84,4 +84,12 @@ export const getRewards = async (contract, account) => {
     } catch(err) {
       console.log(err);
     }
-  }
+}
+
+const fetchNoCache = async (url) => {
+    return await fetch(url, {
+        headers: {
+            'Cache-Control': 'no-cache'
+        }
+    });
+}
