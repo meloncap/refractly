@@ -12,7 +12,7 @@ export const providerOptions = {
   walletconnect: {
     package: WalletConnect, // required
     options: {
-      infuraId: process.env.INFURA_KEY // required
+      infuraId: process.env.REACT_APP_INFURA_KEY // required
     }
   }
 };
