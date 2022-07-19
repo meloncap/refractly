@@ -3,7 +3,7 @@ import readContractABI from './contracts/read-contract.json'
 import writeContractABI from './contracts/write-contract.json'
 
 export const getReadContract = async (provider) => {
-    window.web3 = new Web3(provider);
+    window.web3 = provider ? new Web3(provider) : new Web3(process.env.REACT_APP_ALCHEMY_URL);
     return await new window.web3.eth.Contract(readContractABI, "0x1432c3553fdf7fbd593a84b3a4d380c643cbf7a2");
 }
 

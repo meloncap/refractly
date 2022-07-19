@@ -3,22 +3,26 @@ import './App.css';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
 import RewardPanel from './RewardPanel';
 import Selector from './Selector';
 import ConnectionButton from './ConnectionButton';
 import { getRewards } from './rewardFetcher';
 import { claimRewards } from './rewardClaimer';
+import { getReadContract } from './contracts';
+import Web3 from 'web3';
 
 const App = () => {
   const [account, setAccount] = useState(null);
+  const [walletConnected, setWalletConnected] = useState(false);
   const [readContract, setReadContract] = useState(null);
   const [writeContract, setWriteContract] = useState(null);
   const [rewards, setRewards] = useState(null);
-  const [claimActions, SetClaimActions] = useState(['1']);
+  const [claimActions, setClaimActions] = useState(['1']);
   const [actionsDisabled, setActionsDisabled] = useState(true);
 
   useEffect(() => {
-    if (account) {
+    if (account && readContract) {
       getRewards(readContract, account)
         .then(fetchedRewards => {
           setRewards(fetchedRewards);
@@ -27,6 +31,7 @@ const App = () => {
   }, [readContract, account])
 
   const onConnected = (readContract, writeContract, account) => {
+    setWalletConnected(true);
     setReadContract(readContract);
     setWriteContract(writeContract);
     setAccount(account);
@@ -34,11 +39,12 @@ const App = () => {
   }
 
   const onDisconnected = () => {
+    setWalletConnected(false);
     setReadContract(null);
     setWriteContract(null);
     setAccount(null);
     setActionsDisabled(true);
-    setRewards(null)
+    setRewards(null);
   }
 
   const getRewardHandler = async () => {
@@ -55,7 +61,23 @@ const App = () => {
   }
 
   const onSelectorItemSelected = (value) => {
-    SetClaimActions(value.sort());
+    setClaimActions(value.sort());
+  }
+
+  const onWalletAddressChanged = async (event) => {
+    const address = event.currentTarget.value;
+
+    if(address && Web3.utils.isAddress(address)) {
+      const readContract = await getReadContract();
+      setAccount(address);
+      setReadContract(readContract);
+      setActionsDisabled(false);
+    }
+    else {
+      setAccount(null);
+      setReadContract(null);
+      setActionsDisabled(true);
+    }
   }
 
   const titleStyle={
@@ -75,6 +97,16 @@ const App = () => {
     width: "200px"
   }
 
+  const addressTextBoxStyle = {
+    backgroundColor: "#1976d2",
+    color: "#fff",
+    float: "right",
+    width: "250px",
+    height: "38px",
+    marginRight: "16px",
+    borderRadius: "4px"
+  }
+
   const donationsStyle = {
     color: "#fff"
   }
@@ -82,18 +114,21 @@ const App = () => {
   return (
     <div className='main-app'>
       <div style={donationsStyle}>Donations Appreciated: 0x6Fc5567Cd168b5531Abd76Ef61F0ef6cFe020fDE</div>
-      <ConnectionButton onConnected={onConnected} onDisconnected={onDisconnected} style={connectionButtonStyle}></ConnectionButton>
+      <ConnectionButton onConnected={onConnected} onDisconnected={onDisconnected} style={connectionButtonStyle} />
+      {walletConnected ? null :
+        <TextField style={addressTextBoxStyle} sx={{ input: { color: '#fff' } }} focus="false" id="wallet-input" placeholder="Wallet Address (View Only)" size="small" onChange={onWalletAddressChanged} />
+      }
       <div><Box style={titleStyle}><h1>Reward Dashboard</h1></Box></div>
       <Grid container spacing={2}>
         <Grid item>
-          <Selector rewardData={rewards} actions={actionNames} onItemSelected={onSelectorItemSelected}></Selector>
+          <Selector rewardData={rewards} actions={actionNames} onItemSelected={onSelectorItemSelected} />
           {actionsDisabled
             ?
             null
             :
             <Grid container spacing={2} style={buttonGridStyle}>
               <Grid item>
-              <Button onClick={getClaimHandler} variant="contained">Run Actions</Button>
+              <Button disabled={!walletConnected} onClick={getClaimHandler} variant="contained">Run Actions</Button>
               </Grid>
               <Grid item>
                 <Button onClick={getRewardHandler} variant="contained">Fetch Rewards</Button>
