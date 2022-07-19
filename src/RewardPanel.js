@@ -21,7 +21,7 @@ const RewardPanel = ({
 
                 return (
                     <Grid item key={reward[0]}>
-                        <Tooltip title={
+                        <Tooltip enterNextDelay={1000} title={
                             <React.Fragment>
                             <b>Pool Staking: </b>{Number(data.poolEarned / diviser).toFixed(8)}<br></br>
                             <b>penDYST Staking: </b>{Number(data.penDystEarned / diviser).toFixed(8)}<br></br>
