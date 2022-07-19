@@ -77,6 +77,7 @@ const App = () => {
       setAccount(null);
       setReadContract(null);
       setActionsDisabled(true);
+      setRewards(null);
     }
   }
 
