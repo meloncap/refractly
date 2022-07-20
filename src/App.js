@@ -4,8 +4,10 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import RewardPanel from './RewardPanel';
-import Selector from './Selector';
+// import Selector from './Selector';
+import Profile from './Profile';
 import ConnectionButton from './ConnectionButton';
 import { getRewards } from './rewardFetcher';
 import { claimRewards } from './rewardClaimer';
@@ -60,9 +62,9 @@ const App = () => {
     1: "Claim All Rewards"
   }
 
-  const onSelectorItemSelected = (value) => {
-    setClaimActions(value.sort());
-  }
+  // const onSelectorItemSelected = (value) => {
+  //   setClaimActions(value.sort());
+  // }
 
   const onWalletAddressChanged = async (event) => {
     const address = event.currentTarget.value;
@@ -122,17 +124,22 @@ const App = () => {
       <div><Box style={titleStyle}><h1>Reward Dashboard</h1></Box></div>
       <Grid container spacing={2}>
         <Grid item>
-          <Selector rewardData={rewards} actions={actionNames} onItemSelected={onSelectorItemSelected} />
+          {/* <Selector rewardData={rewards} actions={actionNames} onItemSelected={onSelectorItemSelected} /> */}
+          <Profile rewardData={rewards} />
           {actionsDisabled
             ?
             null
             :
             <Grid container spacing={2} style={buttonGridStyle}>
               <Grid item>
-              <Button disabled={!walletConnected} onClick={getClaimHandler} variant="contained">Run Actions</Button>
+                <Tooltip title="Claims all rewards from LPs, penDYST staking, and locked Pen">
+                  <Button disabled={!walletConnected} onClick={getClaimHandler} variant="contained">Claim All Rewards</Button>
+                </Tooltip>
               </Grid>
               <Grid item>
-                <Button onClick={getRewardHandler} variant="contained">Fetch Rewards</Button>
+                <Tooltip title="Refresh rewards">
+                  <Button onClick={getRewardHandler} variant="contained">Refresh</Button>
+                </Tooltip>
               </Grid>
             </Grid>
           }
