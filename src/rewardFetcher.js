@@ -19,7 +19,7 @@ export const getRewards = async (contract, account) => {
 
         let rewards = combineRewards(totalRewards);
 
-        rewards = addPrices(rewards);
+        await addPrices(rewards);
 
         return rewards;
     } catch(err) {
@@ -116,8 +116,6 @@ const addPrices = async (rewards) => {
           }
         }
     }
-
-    return rewards;
 }
 
 const fetchNoCache = async (url) => {
