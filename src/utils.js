@@ -15,8 +15,8 @@ export const toHex = (num) => {
 export const formatAsPercent = (num) => {
   return new Intl.NumberFormat('default', {
     style: 'percent',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(num);
 }
   
