@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
+import Web3 from 'web3';
 import Web3Modal from "web3modal";
 import { ethers } from 'ethers';
 import { providerOptions } from './providerOptions';
-import { getReadContract, getWriteContract } from './contracts';
 import { truncateAddress } from './utils';
 
 const web3Modal = new Web3Modal({
@@ -65,9 +65,8 @@ const ConnectionButton = ({
       if (accounts) setAccount(accounts[0]);
       // setChainId(network.chainId);
 
-      const readContract = await getReadContract(provider);
-      const writecontract = await getWriteContract(provider);
-      onConnected(readContract, writecontract, accounts[0]);
+      const web3 = new Web3(provider);
+      onConnected(web3, accounts[0]);
     } catch (error) {
       setError(error);
     }

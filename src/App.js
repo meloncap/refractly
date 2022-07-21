@@ -11,51 +11,46 @@ import Profile from './Profile';
 import ConnectionButton from './ConnectionButton';
 import { getRewards } from './rewardFetcher';
 import { claimRewards } from './rewardClaimer';
-import { getReadContract } from './contracts';
 import Web3 from 'web3';
 
 const App = () => {
   const [account, setAccount] = useState(null);
   const [walletConnected, setWalletConnected] = useState(false);
-  const [readContract, setReadContract] = useState(null);
-  const [writeContract, setWriteContract] = useState(null);
+  const [web3, setWeb3] = useState(null);
   const [rewards, setRewards] = useState(null);
   const [claimActions, setClaimActions] = useState(['1']);
   const [actionsDisabled, setActionsDisabled] = useState(true);
 
   useEffect(() => {
-    if (account && readContract) {
-      getRewards(readContract, account)
-        .then(fetchedRewards => {
-          setRewards(fetchedRewards);
-        });
+    if (account && web3) {
+      getRewardHandler();
     }
-  }, [readContract, account])
+  }, [account, web3])
 
-  const onConnected = (readContract, writeContract, account) => {
+  const onConnected = (web3, account) => {
     setWalletConnected(true);
-    setReadContract(readContract);
-    setWriteContract(writeContract);
     setAccount(account);
+    setWeb3(web3);
     setActionsDisabled(false);
   }
 
   const onDisconnected = () => {
     setWalletConnected(false);
-    setReadContract(null);
-    setWriteContract(null);
     setAccount(null);
+    setWeb3(null);
     setActionsDisabled(true);
     setRewards(null);
   }
 
   const getRewardHandler = async () => {
-    const fetchedRewards = await getRewards(readContract, account);
-    setRewards(fetchedRewards);
+    getRewards(web3, account)
+      .then(rewards => {
+        setRewards(rewards);
+      });
   }
 
   const getClaimHandler = async () => {
-    await claimRewards(writeContract, account, claimActions)
+    await claimRewards(web3, account, claimActions)
   }
 
   const actionNames = {
@@ -70,14 +65,14 @@ const App = () => {
     const address = event.currentTarget.value;
 
     if(address && Web3.utils.isAddress(address)) {
-      const readContract = await getReadContract();
       setAccount(address);
-      setReadContract(readContract);
+      const web3 = new Web3(process.env.REACT_APP_ALCHEMY_URL);
+      setWeb3(web3);
       setActionsDisabled(false);
     }
     else {
       setAccount(null);
-      setReadContract(null);
+      setWeb3(null);
       setActionsDisabled(true);
       setRewards(null);
     }
@@ -132,9 +127,14 @@ const App = () => {
             :
             <Grid container spacing={2} style={buttonGridStyle}>
               <Grid item>
-                <Tooltip title="Claims all rewards from LPs, penDYST staking, and locked Pen">
-                  <Button disabled={!walletConnected} onClick={getClaimHandler} variant="contained">Claim All Rewards</Button>
-                </Tooltip>
+                {!walletConnected
+                  ?
+                  null
+                  :
+                  <Tooltip title="Claims all rewards from LPs, penDYST staking, and locked Pen">
+                    <Button onClick={getClaimHandler} variant="contained">Claim All Rewards</Button>
+                  </Tooltip>
+                }
               </Grid>
               <Grid item>
                 <Tooltip title="Refresh rewards">

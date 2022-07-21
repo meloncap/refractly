@@ -1,20 +1,25 @@
+import { ReadContract } from "./contracts/ReadContract";
+
 const dystAddr = "0x39aB6574c289c3Ae4d88500eEc792AB5B947A5Eb";
 // const penAddr = "0x9008D70A5282a936552593f410AbcBcE2F891A97";
 const penDystAddr = "0x5b0522391d0A5a37FD117fE4C43e8876FB4e91E6";
 const usdtAddr = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 const usdcAddr = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174";
 
-export const getRewards = async (contract, account) => {
+export const getRewards = async (web3, account) => {
     try {
+
+        const readContract = new ReadContract(web3, account);
+
         let totalRewards = [];
 
-        const vIPenRewards = await getvIPenRewards(contract, account);
+        const vIPenRewards = await getvIPenRewards(readContract);
         totalRewards.push(vIPenRewards)
 
-        const penDystRewards = await getPenDystRewards(contract, account);
+        const penDystRewards = await getPenDystRewards(readContract);
         totalRewards.push(penDystRewards)
 
-        const poolRewards = await getPoolRewards(contract, account);
+        const poolRewards = await getPoolRewards(readContract);
         totalRewards.push(poolRewards);
 
         let rewards = combineRewards(totalRewards);
@@ -27,20 +32,20 @@ export const getRewards = async (contract, account) => {
     }
 }
 
-const getvIPenRewards = async (contract, account) => {
-    const result = await contract.methods.vlPenRewardTokenPositionsOf(account).call();
+const getvIPenRewards = async (contract) => {
+    const result = await contract.getVlPenRewardTokenPositionsOf()
     const rewards = result.reduce((a, v) => ({ ...a, [v.rewardTokenAddress]: {earned: Number(v.earned), vIPenEarned: Number(v.earned)}}), {});
     return rewards;
 }
 
-const getPenDystRewards = async (contract, account) => {
-    const result = await contract.methods.penDystRewardPoolPosition(account).call();
+const getPenDystRewards = async (contract) => {
+    const result = await contract.getPenDystRewardPoolPosition();
     const rewards = result.reduce((a, v) => ({ ...a, [v.rewardTokenAddress]: {earned: Number(v.earned), penDystEarned: Number(v.earned)}}), {});
     return rewards;
 }
 
-const getPoolRewards = async (contract, account) => {
-    const positions = await contract.methods.stakingPoolsPositions(account).call();
+const getPoolRewards = async (contract) => {
+    const positions = await contract.getStakingPoolsPositions();
 
     const rewards = positions.reduce((basket, rewards) => {
         for (const [, rewardData] of Object.entries(rewards.rewardTokens)) {
