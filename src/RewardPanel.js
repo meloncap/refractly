@@ -20,13 +20,23 @@ const RewardPanel = ({
                 const data = reward[1];
                 const rewards = data.earned / diviser;
 
+                let poolPercent = 0;
+                let penDystPercent = 0;
+                let vIPenPercent = 0;
+                
+                if (rewards > 0) {
+                    poolPercent = (data.poolEarned / diviser) / rewards;
+                    penDystPercent = (data.penDystEarned / diviser) / rewards;
+                    vIPenPercent = (data.vIPenEarned / diviser) / rewards;
+                }
+
                 return (
                     <Grid item key={reward[0]}>
                         <Tooltip enterDelay={500} enterNextDelay={500} title={
                             <React.Fragment>
-                            <b>Pool Staking: </b>{formatAsPercent((data.poolEarned / diviser) / rewards)}<br></br>
-                            <b>penDYST Staking: </b>{formatAsPercent((data.penDystEarned / diviser) / rewards)}<br></br>
-                            <b>vIPEN Locking: </b>{formatAsPercent((data.vIPenEarned / diviser) / rewards)}
+                            <b>Pool Staking: </b>{formatAsPercent(poolPercent)}<br></br>
+                            <b>penDYST Staking: </b>{formatAsPercent(penDystPercent)}<br></br>
+                            <b>vIPEN Locking: </b>{formatAsPercent(vIPenPercent)}
                             </React.Fragment>
                         }>
                             <DisplayBox
