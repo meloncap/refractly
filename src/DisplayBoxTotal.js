@@ -53,7 +53,7 @@ const DisplayBoxTotal = ( {title, reward, rewardLabel, rewardAmount }) => {
         <Box style={boxStyle}>
             <Box style={innerBoxStyle}>
                 <p style={pStyle}>{title}</p>
-                <h2 style={h2Style}>${Number(rewardAmount).toFixed(3)}</h2>
+                <h2 style={h2Style}>${Number(rewardAmount).toFixed(2)}</h2>
             </Box>
         </Box>
     )

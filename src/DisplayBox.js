@@ -71,7 +71,7 @@ const DisplayBox = React.forwardRef((props, ref) => {
             <Box style={innerBoxStyle}>
                 <p style={pStyle}>{props.header}</p>
                 <h2 style={h2Style}>{Number(props.reward).toFixed(8)} <span style={labelStyle}>{props.rewardLabel}</span></h2>
-                <h3 style={h3Style}>${Number(props.rewardAmount).toFixed(3)}</h3>
+                <h3 style={h3Style}>${Number(props.rewardAmount).toFixed(2)}</h3>
             </Box>
         </Box>
     )
