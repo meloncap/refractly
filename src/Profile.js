@@ -1,8 +1,9 @@
 import React from 'react';
 import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
 import DisplayBoxTotal from './DisplayBoxTotal';
  
-const Profile = ( { rewardData }) => {
+const Profile = ( { balances, rewardData }) => {
     const boxStyle={
         display:"flex",
         flexDirection:"column",
@@ -37,6 +38,14 @@ const Profile = ( { rewardData }) => {
 
     const diviser = 10 ** 18;
 
+    let totalBalance = 0;
+    if (balances) {
+        Object.entries(balances).forEach(balance => {
+            const data = balance[1];
+            totalBalance += data;
+        });
+    }
+
     let earned = 0;
     if (rewardData) {
         Object.entries(rewardData).forEach(reward => {
@@ -50,10 +59,27 @@ const Profile = ( { rewardData }) => {
         <Box style={boxStyle}>
             <Box style={innerBoxStyle}>
                 <p style={pStyle}>My Portfolio</p>
-                <DisplayBoxTotal
-                    title="Total Earned"
-                    rewardAmount={earned}
-                ></DisplayBoxTotal>
+                <Tooltip title={
+                    <React.Fragment>
+                    Total portfolio balance not including unclaimed rewards<br></br>
+                    This includes:<br></br>
+                    - DYST, PEN, and penDYST in wallet<br></br>
+                    - Staked penDYST and locked PEN<br></br>
+                    - Staked LP balance
+                    </React.Fragment>
+                    
+                }>
+                    <DisplayBoxTotal
+                        header="Portfolio Value"
+                        value={totalBalance}
+                    ></DisplayBoxTotal>
+                </Tooltip>
+                <Tooltip title="Rewards that have not been claimed yet">
+                    <DisplayBoxTotal
+                        header="Unclaimed Rewards"
+                        value={earned}
+                    ></DisplayBoxTotal>
+                </Tooltip>
             </Box>
         </Box>
     )

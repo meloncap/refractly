@@ -1,7 +1,7 @@
 import React from 'react';
 import Box from '@mui/material/Box';
  
-const DisplayBoxTotal = ( {title, reward, rewardLabel, rewardAmount }) => {
+const DisplayBoxTotal = React.forwardRef((props, ref) => {
     const boxStyle={
         display:"flex",
         flexDirection:"column",
@@ -14,6 +14,7 @@ const DisplayBoxTotal = ( {title, reward, rewardLabel, rewardAmount }) => {
         maxHeight:"180px",
         maxWidth:"270px",
         minWidth:"270px",
+        marginBottom:"8px"
     }
 
     const innerBoxStyle={
@@ -50,13 +51,13 @@ const DisplayBoxTotal = ( {title, reward, rewardLabel, rewardAmount }) => {
     }
 
     return (
-        <Box style={boxStyle}>
+        <Box {...props} style={boxStyle} ref={ref}>
             <Box style={innerBoxStyle}>
-                <p style={pStyle}>{title}</p>
-                <h2 style={h2Style}>${Number(rewardAmount).toFixed(2)}</h2>
+                <p style={pStyle}>{props.header}</p>
+                <h2 style={h2Style}>${Number(props.value).toFixed(2)}</h2>
             </Box>
         </Box>
     )
-}
+})
  
 export default DisplayBoxTotal

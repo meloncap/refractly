@@ -40,7 +40,7 @@ const RewardPanel = ({
                             </React.Fragment>
                         }>
                             <DisplayBox
-                                header={`${data.symbol} Rewards`}
+                                header={`${data.symbol}`}
                                 reward={rewards}
                                 rewardLabel={data.symbol}
                                 rewardAmount={rewards * data.price}

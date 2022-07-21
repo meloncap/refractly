@@ -9,8 +9,9 @@ import RewardPanel from './RewardPanel';
 // import Selector from './Selector';
 import Profile from './Profile';
 import ConnectionButton from './ConnectionButton';
-import { getRewards } from './rewardFetcher';
+import { getProfile } from './profileFetcher';
 import { claimRewards } from './rewardClaimer';
+import { createAlchemyWeb3 } from "@alch/alchemy-web3";
 import Web3 from 'web3';
 
 const App = () => {
@@ -18,6 +19,7 @@ const App = () => {
   const [walletConnected, setWalletConnected] = useState(false);
   const [web3, setWeb3] = useState(null);
   const [rewards, setRewards] = useState(null);
+  const [balances, setBalances] = useState(null);
   const [claimActions, setClaimActions] = useState(['1']);
   const [actionsDisabled, setActionsDisabled] = useState(true);
 
@@ -40,12 +42,14 @@ const App = () => {
     setWeb3(null);
     setActionsDisabled(true);
     setRewards(null);
+    setBalances(null);
   }
 
   const getRewardHandler = async () => {
-    getRewards(web3, account)
-      .then(rewards => {
-        setRewards(rewards);
+    getProfile(web3, account)
+      .then(profile => {
+        setRewards(profile.rewards);
+        setBalances(profile.balances);
       });
   }
 
@@ -66,7 +70,8 @@ const App = () => {
 
     if(address && Web3.utils.isAddress(address)) {
       setAccount(address);
-      const web3 = new Web3(process.env.REACT_APP_ALCHEMY_URL);
+      // const web3 = new Web3(process.env.REACT_APP_ALCHEMY_URL);
+      const web3 = createAlchemyWeb3(process.env.REACT_APP_ALCHEMY_URL)
       setWeb3(web3);
       setActionsDisabled(false);
     }
@@ -75,6 +80,7 @@ const App = () => {
       setWeb3(null);
       setActionsDisabled(true);
       setRewards(null);
+      setBalances(null);
     }
   }
 
@@ -120,7 +126,7 @@ const App = () => {
       <Grid container spacing={2}>
         <Grid item>
           {/* <Selector rewardData={rewards} actions={actionNames} onItemSelected={onSelectorItemSelected} /> */}
-          <Profile rewardData={rewards} />
+          <Profile balances={balances} rewardData={rewards} />
           {actionsDisabled
             ?
             null

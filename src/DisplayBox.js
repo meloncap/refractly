@@ -30,11 +30,12 @@ const DisplayBox = React.forwardRef((props, ref) => {
 
     const pStyle={
         color: "#fff",
-        fontSize: "12px",
+        fontSize: "16px",
         fontWeight: "600",
         lineHeight: "8px",
         textTransform: "uppercase",
-        marginBottom: "2px"
+        marginBottom: "2px",
+        marginTop: "2px"
     }
 
     const h2Style={
@@ -61,16 +62,11 @@ const DisplayBox = React.forwardRef((props, ref) => {
         margin:"-1rem"
     }
 
-    const labelStyle={
-        marginLeft: "1rem",
-        fontSize: "18px"
-    }
-
     return (
         <Box {...props} style={boxStyle} ref={ref}>
             <Box style={innerBoxStyle}>
                 <p style={pStyle}>{props.header}</p>
-                <h2 style={h2Style}>{Number(props.reward).toFixed(8)} <span style={labelStyle}>{props.rewardLabel}</span></h2>
+                <h2 style={h2Style}>{props.reward === 0 ? 0 : Number(props.reward).toFixed(8)}</h2>
                 <h3 style={h3Style}>${Number(props.rewardAmount).toFixed(2)}</h3>
             </Box>
         </Box>
