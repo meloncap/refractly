@@ -18,5 +18,12 @@ export const formatAsPercent = (num) => {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(num);
-}
+};
+
+export const formatAsUsd = (amount) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(amount);
+};
   

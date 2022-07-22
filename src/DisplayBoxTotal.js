@@ -1,5 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
+import { formatAsUsd } from './utils';
  
 const DisplayBoxTotal = React.forwardRef((props, ref) => {
     const boxStyle={
@@ -54,7 +55,7 @@ const DisplayBoxTotal = React.forwardRef((props, ref) => {
         <Box {...props} style={boxStyle} ref={ref}>
             <Box style={innerBoxStyle}>
                 <p style={pStyle}>{props.header}</p>
-                <h2 style={h2Style}>${Number(props.value).toFixed(2)}</h2>
+                <h2 style={h2Style}>{formatAsUsd(props.value)}</h2>
             </Box>
         </Box>
     )
