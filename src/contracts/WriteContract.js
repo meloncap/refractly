@@ -8,7 +8,7 @@ export class WriteContract {
 
     claimAll = async () => {
         console.log('Start claimAllStakingRewards')
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
             this.contract.methods.claimAllStakingRewards().send({ from: this.account, gasPrice: '50000000000' /* 50 */ })
                 .on('receipt', function(receipt){
                     console.log('Done claimAllStakingRewards')
@@ -17,7 +17,56 @@ export class WriteContract {
                 })
                 .on('error', function(error, receipt) {
                     console.log("Error occured in transaction: ", error)
+                    reject(error);
                 });
         });
     }
+
+    convertDystToPenDystAndStake = async () => {
+        console.log('Start convertDystToPenDystAndStake')
+        return new Promise((resolve, reject) => {
+            this.contract.methods.convertDystToPenDystAndStake().send({ from: this.account, gasPrice: '35000000000' /* 35 */ })
+            .on('receipt', function(receipt){
+              console.log('Done convertDystToPenDystAndStake')
+              console.log(receipt);
+              resolve(receipt);
+            })
+            .on('error', function(error, receipt) {
+              console.log("Error occured in transaction: ", error)
+              reject(error);
+            })
+        })
+      }
+    
+      stakePenDyst = async () => {
+        console.log('Start stakePenDyst')
+        return new Promise((resolve, reject) => {
+            this.contract.methods.stakePenDyst().send({ from: this.account, gasPrice: '35000000000' /* 35 */ })
+            .on('receipt', function(receipt){
+              console.log('Done stakePenDyst')
+              console.log(receipt);
+              resolve(receipt);
+            })
+            .on('error', function(error, receipt) {
+              console.log("Error occured in transaction: ", error)
+              reject(error);
+            })
+        })
+      }
+    
+      voteLockPen = async (penAmount) => {
+        console.log('Start voteLockPen')
+        return new Promise((resolve, reject) => {
+            this.contract.methods.voteLockPen(penAmount, 0).send({ from: this.account, gasPrice: '40000000000' /* 40 */ })
+            .on('receipt', function(receipt){
+              console.log('Done voteLockPen')
+              console.log(receipt);
+              resolve(receipt);
+            })
+            .on('error', function(error, receipt) {
+              console.log("Error occured in transaction: ", error)
+              reject(error);
+            })
+        })
+      }
 }

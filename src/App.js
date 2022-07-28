@@ -3,14 +3,16 @@ import './App.css';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import ActionDrawer from './ActionDrawer';
 import RewardPanel from './RewardPanel';
-// import Selector from './Selector';
+import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import Profile from './Profile';
 import ConnectionButton from './ConnectionButton';
 import { getProfile } from './profileFetcher';
-import { claimRewards } from './rewardClaimer';
+import { WriteContract } from "./contracts/WriteContract";
 import { createAlchemyWeb3 } from "@alch/alchemy-web3";
 import Web3 from 'web3';
 
@@ -20,8 +22,8 @@ const App = () => {
   const [web3, setWeb3] = useState(null);
   const [rewards, setRewards] = useState(null);
   const [balances, setBalances] = useState(null);
-  const [claimActions, setClaimActions] = useState(['1']);
   const [actionsDisabled, setActionsDisabled] = useState(true);
+  const [actionDrawerOpen, setActionDrawerOpen] = useState(false);
 
   useEffect(() => {
     if (account && web3) {
@@ -54,16 +56,9 @@ const App = () => {
   }
 
   const getClaimHandler = async () => {
-    await claimRewards(web3, account, claimActions)
+    const writeContract = new WriteContract(web3, account);
+    writeContract.claimAll();
   }
-
-  const actionNames = {
-    1: "Claim All Rewards"
-  }
-
-  // const onSelectorItemSelected = (value) => {
-  //   setClaimActions(value.sort());
-  // }
 
   const onWalletAddressChanged = async (event) => {
     const address = event.currentTarget.value;
@@ -93,6 +88,7 @@ const App = () => {
 
   const buttonGridStyle = {
     paddingTop: "2rem",
+    alignItems: "center",
     justifyContent: "center"
   }
 
@@ -115,6 +111,10 @@ const App = () => {
     color: "#fff"
   }
 
+  const toggleDrawer = (open) => (event) => {
+    setActionDrawerOpen(open);
+  };
+
   return (
     <div className='main-app'>
       <div style={donationsStyle}>Donations Appreciated: 0x6Fc5567Cd168b5531Abd76Ef61F0ef6cFe020fDE</div>
@@ -125,13 +125,24 @@ const App = () => {
       <div><Box style={titleStyle}><h1>Reward Dashboard</h1></Box></div>
       <Grid container spacing={2}>
         <Grid item>
-          {/* <Selector rewardData={rewards} actions={actionNames} onItemSelected={onSelectorItemSelected} /> */}
           <Profile balances={balances} rewardData={rewards} />
           {actionsDisabled
             ?
             null
             :
             <Grid container spacing={2} style={buttonGridStyle}>
+              <Grid item>
+                {!walletConnected
+                  ?
+                  null
+                  :
+                <Tooltip title="Open drawer for more actions">
+                  <IconButton onClick={toggleDrawer(true)} variant="contained" style={{backgroundColor: "#1976d2", color: "#fff"}}>
+                    <MenuOutlinedIcon />
+                  </IconButton>
+                </Tooltip>
+                }
+              </Grid>
               <Grid item>
                 {!walletConnected
                   ?
@@ -154,6 +165,22 @@ const App = () => {
           <RewardPanel rewardData={rewards}></RewardPanel>
         </Grid>
       </Grid>
+      <ActionDrawer anchor="left"
+        open={actionDrawerOpen}
+        onClose={toggleDrawer(false)}
+        SlideProps={{
+          direction: "up"
+        }}
+        PaperProps={{
+          sx: {
+            backgroundColor: "#151718",
+            width: "400px",
+            top: "25%"
+          }
+        }}
+        web3={web3}
+        account={account}
+      />
     </div>
   )
 }
