@@ -8,11 +8,11 @@ body {
   position: relative;
   z-index: 0;
   background-image: url('./background.png');
-  padding: 50px 5% 120px;
+  padding: 50px 5% 50px;
   height: -webkit-fit-content;
   height: -moz-fit-content;
   height: fit-content;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
   color: "#fff",
 }

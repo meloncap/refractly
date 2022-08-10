@@ -21,10 +21,10 @@ export class ReadContract {
         return Number(penDystBalance);
     }
     
-    getVIPenLockedData = async () => {
+    getLockedPenData = async () => {
         const userProxy = await this.contract.methods.userProxyByAccount(this.account).call();
         const lockedData = await this.contract.methods.vlPenLocksData(userProxy).call();
-        return Number(lockedData.total);
+        return lockedData;
     }
 
     getVlPenRewardTokenPositionsOf = async () => {

@@ -1,35 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './App.css';
-import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import TextField from '@mui/material/TextField';
-import Tooltip from '@mui/material/Tooltip';
-import ActionDrawer from './ActionDrawer';
-import RewardPanel from './RewardPanel';
-import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
-import Profile from './Profile';
+import { ThemeProvider } from '@mui/material/styles';
+import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
+import LockedPenDashboard from './LockedPenDashboard';
+import { tabTheme } from './styles/theme';
 import ConnectionButton from './ConnectionButton';
-import { getProfile } from './profileFetcher';
-import { WriteContract } from "./contracts/WriteContract";
 import { createAlchemyWeb3 } from "@alch/alchemy-web3";
+import { useStickyState } from './useStickyState';
 import Web3 from 'web3';
+import RewardDashboard from './RewardDashboard';
 
 const App = () => {
   const [account, setAccount] = useState(null);
   const [walletConnected, setWalletConnected] = useState(false);
   const [web3, setWeb3] = useState(null);
-  const [rewards, setRewards] = useState(null);
-  const [balances, setBalances] = useState(null);
   const [actionsDisabled, setActionsDisabled] = useState(true);
-  const [actionDrawerOpen, setActionDrawerOpen] = useState(false);
-
-  useEffect(() => {
-    if (account && web3) {
-      getRewardHandler();
-    }
-  }, [account, web3])
+  const [tabValue, setTabValue] = useStickyState(0);
 
   const onConnected = (web3, account) => {
     setWalletConnected(true);
@@ -43,21 +33,6 @@ const App = () => {
     setAccount(null);
     setWeb3(null);
     setActionsDisabled(true);
-    setRewards(null);
-    setBalances(null);
-  }
-
-  const getRewardHandler = async () => {
-    getProfile(web3, account)
-      .then(profile => {
-        setRewards(profile.rewards);
-        setBalances(profile.balances);
-      });
-  }
-
-  const getClaimHandler = async () => {
-    const writeContract = new WriteContract(web3, account);
-    writeContract.claimAll();
   }
 
   const onWalletAddressChanged = async (event) => {
@@ -74,113 +49,63 @@ const App = () => {
       setAccount(null);
       setWeb3(null);
       setActionsDisabled(true);
-      setRewards(null);
-      setBalances(null);
     }
   }
 
-  const titleStyle={
-    color: "#fff",
-    display: "flex",
-    justifyContent: "center",
-    width: "100%"
-  }
-
-  const buttonGridStyle = {
-    paddingTop: "2rem",
-    alignItems: "center",
-    justifyContent: "center"
-  }
-
   const connectionButtonStyle = {
-    float: "right",
     width: "200px"
   }
 
   const addressTextBoxStyle = {
     backgroundColor: "#1976d2",
     color: "#fff",
-    float: "right",
     width: "250px",
     height: "38px",
     marginRight: "16px",
     borderRadius: "4px"
   }
 
-  const donationsStyle = {
+  const headerStyle = {
     color: "#fff"
   }
 
-  const toggleDrawer = (open) => (event) => {
-    setActionDrawerOpen(open);
-  };
+  const tabsStyle = {
+    margin: "16px 0"
+  }
+
+  const handleChange = (_, newValue) => {
+    setTabValue(newValue);
+  }
 
   return (
     <div className='main-app'>
-      <div style={donationsStyle}>Donations Appreciated: 0x6Fc5567Cd168b5531Abd76Ef61F0ef6cFe020fDE</div>
-      <ConnectionButton onConnected={onConnected} onDisconnected={onDisconnected} style={connectionButtonStyle} />
-      {walletConnected ? null :
-        <TextField style={addressTextBoxStyle} sx={{ input: { color: '#fff' } }} focus="false" id="wallet-input" placeholder="Wallet Address (View Only)" size="small" onChange={onWalletAddressChanged} />
-      }
-      <div><Box style={titleStyle}><h1>Reward Dashboard</h1></Box></div>
-      <Grid container spacing={2}>
-        <Grid item>
-          <Profile balances={balances} rewardData={rewards} />
-          {actionsDisabled
-            ?
-            null
-            :
-            <Grid container spacing={2} style={buttonGridStyle}>
-              <Grid item>
-                {!walletConnected
-                  ?
-                  null
-                  :
-                <Tooltip title="Open drawer for more actions">
-                  <IconButton onClick={toggleDrawer(true)} variant="contained" style={{backgroundColor: "#1976d2", color: "#fff"}}>
-                    <MenuOutlinedIcon />
-                  </IconButton>
-                </Tooltip>
-                }
-              </Grid>
-              <Grid item>
-                {!walletConnected
-                  ?
-                  null
-                  :
-                  <Tooltip title="Claims all rewards from LPs, penDYST staking, and locked Pen">
-                    <Button onClick={getClaimHandler} variant="contained">Claim All Rewards</Button>
-                  </Tooltip>
-                }
-              </Grid>
-              <Grid item>
-                <Tooltip title="Refresh rewards">
-                  <Button onClick={getRewardHandler} variant="contained">Refresh</Button>
-                </Tooltip>
-              </Grid>
-            </Grid>
-          }
-        </Grid>
-        <Grid item xs={9} sm={2} md={4} lg={8} xl={9}>
-          <RewardPanel rewardData={rewards}></RewardPanel>
-        </Grid>
-      </Grid>
-      <ActionDrawer anchor="left"
-        open={actionDrawerOpen}
-        onClose={toggleDrawer(false)}
-        SlideProps={{
-          direction: "up"
-        }}
-        PaperProps={{
-          sx: {
-            backgroundColor: "#151718",
-            width: "400px",
-            top: "25%"
-          }
-        }}
-        web3={web3}
-        account={account}
-      />
+      <BrowserRouter>
+        <React.Fragment>
+          {/* <h3 style={headerStyle}>Refractly</h3> */}
+          <Box sx={{display: "flex", justifyContent: "space-between"}}>
+            <div style={headerStyle}>Donations Appreciated: 0x6Fc5567Cd168b5531Abd76Ef61F0ef6cFe020fDE</div>
+            <Box sx={{display: "flex"}}>
+              {walletConnected ? null :
+                  <TextField style={addressTextBoxStyle} sx={{ input: { color: '#fff' } }} focus="false" id="wallet-input" placeholder="Wallet Address (View Only)" size="small" onChange={onWalletAddressChanged} />
+              }
+              <ConnectionButton onConnected={onConnected} onDisconnected={onDisconnected} style={connectionButtonStyle} />
+            </Box>
+          </Box>
+          <Box sx={{display: "flex", justifyContent: "center"}}>
+            <ThemeProvider theme={tabTheme}>
+              <Tabs value={tabValue} onChange={handleChange} centered style={tabsStyle}>
+                  <Tab label='Dashboard'  to='/' component={Link} />
+                  <Tab label='Locked PEN'  to='/lockedPen' component={Link} />
+              </Tabs>
+            </ThemeProvider>
+          </Box>
+          <Routes>
+            <Route index element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} />} />
+            <Route path="/" element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} />} />
+            <Route path="/lockedPen" element={<LockedPenDashboard account={account} web3={web3} />} />
+          </Routes>
+        </React.Fragment>
+      </BrowserRouter>
     </div>
   )
 }

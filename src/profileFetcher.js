@@ -20,13 +20,13 @@ export const getProfile = async (web3, account) => {
             dystBalance,
             penDystBalance,
             penDystStakedBalance,
-            lockedPenBalance,
+            lockedPenData,
             penBalance
         ] = await Promise.all([
             readContract.getDystWalletBalance(),
             readContract.getPenDystWalletBalance(),
             readContract.getPenDystStakedBalance(),
-            readContract.getVIPenLockedData(),
+            readContract.getLockedPenData(),
             tokenContract.getBalanceOf()
         ]);
 
@@ -35,7 +35,7 @@ export const getProfile = async (web3, account) => {
         let walletAndStakedBalances = {};
         walletAndStakedBalances[dystAddr] = dystBalance;
         walletAndStakedBalances[penDystAddr] = penDystBalance + penDystStakedBalance;
-        walletAndStakedBalances[penAddr] = Number(penBalance) + lockedPenBalance;
+        walletAndStakedBalances[penAddr] = Number(penBalance) + Number(lockedPenData.total);
 
         balances.push(walletAndStakedBalances);
 
