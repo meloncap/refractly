@@ -30,11 +30,6 @@ export const tabTheme = createTheme({
                     height: "30px",
                     fontSize: "14px"
                 },
-                // '@media (max-width:780px)': {
-                //     width: "180px",
-                //     height: "30px",
-                //     fontSize: "14px"
-                // },
                 '@media (max-width:600px)': {
                     width: "120px",
                     height: "30px",

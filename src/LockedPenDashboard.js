@@ -5,6 +5,7 @@ import { formatAsUsd } from './utils';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import './LockedPenDashboard.css';
 
 const LockedPenDashboard = ({ account, web3 }) => {
   const [lockData, setLockData] = useState([]);
@@ -80,8 +81,6 @@ const LockedPenDashboard = ({ account, web3 }) => {
   }
 
   const tableBodyStyle = {
-    minHeight: "540px",
-    maxHeight: "540px",
     overflow: "hidden auto"
   }
 
@@ -106,7 +105,7 @@ const LockedPenDashboard = ({ account, web3 }) => {
               </Grid>
             </Grid>
           </Box>
-          <Box sx={tableBodyStyle}>
+          <Box className="table-body" sx={tableBodyStyle}>
             {lockData.map((row, i) => (
               <Box key={i} sx={{padding: "16px 12px", background: i % 2 === 0 ? "": "hsla(0,0%,100%,.05)", borderRadius: i % 2 === 0 ? "": "10px"}}>
                 <Grid container spacing={2} direction="row" justifyContent="center" alignItems="center" style={rowStyle}>
