@@ -5,7 +5,9 @@ import Tooltip from '@mui/material/Tooltip';
 import { formatAsPercent } from './utils';
 
 const RewardPanel = ({
-    rewardData
+    rewardData,
+    prices,
+    symbols
 }) => {
 
     const diviser = 10 ** 18;
@@ -17,6 +19,7 @@ const RewardPanel = ({
     return (
         <Grid container spacing={1}>
             {Object.entries(rewardData).map((reward) => {
+                const address = reward[0];
                 const data = reward[1];
                 const rewards = data.earned / diviser;
 
@@ -40,10 +43,10 @@ const RewardPanel = ({
                             </React.Fragment>
                         }>
                             <DisplayBox
-                                header={`${data.symbol}`}
+                                header={`${symbols[address]}`}
                                 reward={rewards}
-                                rewardLabel={data.symbol}
-                                rewardAmount={rewards * data.price}
+                                rewardLabel={symbols[address]}
+                                rewardAmount={rewards * prices[address]}
                             ></DisplayBox>
                         </Tooltip>
                     </Grid>

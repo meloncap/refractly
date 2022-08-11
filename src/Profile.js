@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import DisplayBoxTotal from './DisplayBoxTotal';
  
-const Profile = ( { balances, rewardData }) => {
+const Profile = ( { balances, rewardData, prices }) => {
     const boxStyle={
         display:"flex",
         flexDirection:"column",
@@ -42,17 +42,19 @@ const Profile = ( { balances, rewardData }) => {
     let totalBalance = 0;
     if (balances) {
         Object.entries(balances).forEach(balance => {
+            const address = balance[0];
             const data = balance[1];
-            totalBalance += data;
+            totalBalance += data / 10 ** 18 * prices[address];
         });
     }
 
     let earned = 0;
     if (rewardData) {
         Object.entries(rewardData).forEach(reward => {
+            const address = reward[0];
             const data = reward[1];
             const rewards = data.earned / diviser;
-            earned += rewards * data.price;
+            earned += rewards * prices[address];
         });
     }    
 

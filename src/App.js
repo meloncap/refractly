@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -18,6 +18,8 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import { truncateAddress } from './utils';
+import { getProfile } from './profileFetcher';
+import LpDashboard from './LpDashboard';
 
 const App = () => {
   const [account, setAccount] = useState(null);
@@ -25,6 +27,30 @@ const App = () => {
   const [web3, setWeb3] = useState(null);
   const [actionsDisabled, setActionsDisabled] = useState(true);
   const [tabValue, setTabValue] = useStickyState(0);
+  const [tokenPrices, setTokenPrices] = useState(null);
+  const [tokenSymbols, setTokenSymbols] = useState(null);
+  const [pools, setPools] = useState(null);
+
+
+  const [rewards, setRewards] = useState(null);
+  const [balances, setBalances] = useState(null);
+
+  useEffect(() => {
+    if (account && web3) {
+      getRewardHandler();
+    }
+  }, [account, web3]);
+
+  const getRewardHandler = async () => {
+    getProfile(web3, account)
+      .then(profile => {
+        setRewards(profile.rewards);
+        setBalances(profile.balances);
+        setPools(profile.pools);
+        setTokenPrices(profile.prices);
+        setTokenSymbols(profile.symbols);
+      });
+  }
 
   const onConnected = (web3, account) => {
     setWalletConnected(true);
@@ -111,15 +137,17 @@ const App = () => {
           <Box sx={{display: "flex", justifyContent: "center"}}>
             <ThemeProvider theme={tabTheme}>
               <Tabs value={tabValue} onChange={handleChange} centered style={tabsStyle}>
-                  <Tab label='Dashboard'  to='/' component={Link} />
-                  <Tab label='Locked PEN'  to='/lockedPen' component={Link} />
+                  <Tab label='Dashboard' to='/' component={Link} />
+                  <Tab label='Locked PEN' to='/lockedPen' component={Link} />
+                  <Tab label='LP Positions' to='/pools' component={Link} />
               </Tabs>
             </ThemeProvider>
           </Box>
           <Routes>
-            <Route index element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} />} />
-            <Route path="/" element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} />} />
+            <Route index element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} balances={balances} rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
+            <Route path="/" element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} balances={balances} rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
             <Route path="/lockedPen" element={<LockedPenDashboard account={account} web3={web3} />} />
+            <Route path="/pools" element={<LpDashboard pools={pools} prices={tokenPrices} symbols={tokenSymbols}  />} />
           </Routes>
         </React.Fragment>
       </BrowserRouter>

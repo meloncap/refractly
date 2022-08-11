@@ -24,4 +24,8 @@ export class LPContract {
     getTotalSupply = async () => {
         return await this.contract.methods.totalSupply().call();
     }
+
+    isStable = async () => {
+        return await this.contract.methods.stable().call();
+    }
 }

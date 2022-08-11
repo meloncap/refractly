@@ -1,6 +1,7 @@
 import { ReadContract } from "./contracts/ReadContract";
 import { TokenContract } from "./contracts/TokenContract";
 import { LPContract } from "./contracts/LPContract";
+import { addPrices, addSymbols } from "./tokenFetcher";
 
 export const dystAddr = "0x39aB6574c289c3Ae4d88500eEc792AB5B947A5Eb";
 export const penAddr = "0x9008D70A5282a936552593f410AbcBcE2F891A97";
@@ -15,27 +16,9 @@ export const getProfile = async (web3, account) => {
     try {
         const readContract = new ReadContract(web3, account);
 
-        const tokenContract = new TokenContract(web3, penAddr, account);
-        const [
-            dystBalance,
-            penDystBalance,
-            penDystStakedBalance,
-            lockedPenData,
-            penBalance
-        ] = await Promise.all([
-            readContract.getDystWalletBalance(),
-            readContract.getPenDystWalletBalance(),
-            readContract.getPenDystStakedBalance(),
-            readContract.getLockedPenData(),
-            tokenContract.getBalanceOf()
-        ]);
+        let balances = [];
 
-        let balances = []
-
-        let walletAndStakedBalances = {};
-        walletAndStakedBalances[dystAddr] = dystBalance;
-        walletAndStakedBalances[penDystAddr] = penDystBalance + penDystStakedBalance;
-        walletAndStakedBalances[penAddr] = Number(penBalance) + Number(lockedPenData.total);
+        const walletAndStakedBalances = await getWalletAndStakedBalances(web3, account, readContract);
 
         balances.push(walletAndStakedBalances);
 
@@ -44,7 +27,7 @@ export const getProfile = async (web3, account) => {
         const [
             vIPenRewards,
             penDystRewards,
-            { poolBalance, poolRewards }
+            { pools, poolBalance, poolRewards }
         ] = await Promise.all([
             getvIPenRewards(readContract),
             getPenDystRewards(readContract),
@@ -64,22 +47,52 @@ export const getProfile = async (web3, account) => {
             combineBalances(balances)
         ]);
 
+        const rewardTokens = Object.keys(rewards).reduce((a, v) => ({ ...a, [v]: undefined}), {});
+        const balanceTokens = Object.keys(combinedBalances).reduce((a, v) => ({ ...a, [v]: undefined}), {});
+        const tokenPriceObj = Object.assign(rewardTokens, balanceTokens);
+        const tokenSymbolObj = structuredClone(tokenPriceObj);
+
         await Promise.all([
-            addPrices(rewards),
-            addSymbols(web3, rewards)
+            addPrices(tokenPriceObj),
+            addSymbols(web3, tokenSymbolObj)
         ]);
 
-        const profileBalances = await getProfileBalances(combinedBalances, rewards);
-
         const profile = {
-            "balances": profileBalances,
-            "rewards": rewards
+            "balances": combinedBalances,
+            "rewards": rewards,
+            "pools": pools,
+            "prices": tokenPriceObj,
+            "symbols": tokenSymbolObj
         };
 
         return profile;
     } catch(err) {
       console.log(err);
     }
+}
+
+const getWalletAndStakedBalances = async (web3, account, readContract) => {
+    const tokenContract = new TokenContract(web3, penAddr, account);
+    const [
+        dystBalance,
+        penDystBalance,
+        penDystStakedBalance,
+        lockedPenData,
+        penBalance
+    ] = await Promise.all([
+        readContract.getDystWalletBalance(),
+        readContract.getPenDystWalletBalance(),
+        readContract.getPenDystStakedBalance(),
+        readContract.getLockedPenData(),
+        tokenContract.getBalanceOf()
+    ]);
+
+    let walletAndStakedBalances = {};
+    walletAndStakedBalances[dystAddr] = dystBalance;
+    walletAndStakedBalances[penDystAddr] = penDystBalance + penDystStakedBalance;
+    walletAndStakedBalances[penAddr] = Number(penBalance) + Number(lockedPenData.total);
+
+    return walletAndStakedBalances;
 }
 
 const getvIPenRewards = async (contract) => {
@@ -94,7 +107,7 @@ const getPenDystRewards = async (contract) => {
     return rewards;
 }
 
-// returns { poolBalance, poolRewards }
+// returns { pools, poolBalance, poolRewards }
 const getPoolsPositions = async (contract, web3) => {
     const positions = await contract.getStakingPoolsPositions();
 
@@ -111,7 +124,8 @@ const getPoolsPositions = async (contract, web3) => {
         return basket;
     }, {});
 
-    const poolBalance = {}
+    const poolBalance = {};
+    const pools = [];
     for (const position of positions) {
         const lpContract = new LPContract(web3, position.dystPoolAddress);
 
@@ -120,13 +134,15 @@ const getPoolsPositions = async (contract, web3) => {
             token1,
             reserve0,
             reserve1,
-            totalSupply
+            totalSupply,
+            isStable
         ] = await Promise.all([
             lpContract.getToken0(),
             lpContract.getToken1(),
             lpContract.getReserve0(),
             lpContract.getReserve1(),
             lpContract.getTotalSupply(),
+            lpContract.isStable(),
         ]);
 
         // user LP amount / total LP amount * reserve amount
@@ -156,9 +172,17 @@ const getPoolsPositions = async (contract, web3) => {
 
         poolBalance[token0] += token0Amount;
         poolBalance[token1] += token1Amount;
+
+        pools.push({
+            "token0": token0,
+            "token1": token1,
+            "amount0": token0Amount / 10 ** 18,
+            "amount1": token1Amount / 10 ** 18,
+            "stable": isStable,
+        })
     }
 
-    return { poolBalance, poolRewards};
+    return { pools, poolBalance, poolRewards};
 }
 
 const combineRewards = (rewardList) => {
@@ -198,112 +222,4 @@ const combineBalances = (balanceList) => {
       }, {});
 
     return combinedBalances;
-}
-
-const getProfileBalances = async (balances, rewards) => {
-    let profile = {};
-
-    const addressesToFetch = [];
-
-    for (const [address, balance] of Object.entries(balances)) {
-        if (rewards[address]) {
-            profile[address] = balance / 10 ** 18 * rewards[address].price;
-            continue;
-        }
-
-        addressesToFetch.push(address);
-
-        // try {
-        //     const addresses = Object.keys(rewards).map((address) => address).join();
-        //     const prices = await fetchPrices(addresses);
-        //     for (const [address, data] of Object.entries(prices)) {
-        //         const key = Object.keys(rewards).find(key => key.toLowerCase() === address)
-        //         profile[key] = balance / 10 ** 18 * data.usd;
-        //     }
-        // } catch (err) {
-        //     console.log(err);
-        // }
-    }
-
-    try {
-        const addresses = addressesToFetch.join();
-        const prices = await fetchPrices(addresses);
-        for (const [address, data] of Object.entries(prices)) {
-            const key = Object.keys(balances).find(key => key.toLowerCase() === address)
-            profile[key] = balances[key] / 10 ** 18 * data.usd;
-        }
-    } catch (err) {
-        console.log(err);
-    }
-
-    return profile;
-}
-
-const addPrices = async (rewards) => {
-    try {
-        const addresses = Object.keys(rewards).map((address) => address).join();
-        const prices = await fetchPrices(addresses);
-        for (const [address, data] of Object.entries(prices)) {
-            const key = Object.keys(rewards).find(key => key.toLowerCase() === address)
-            rewards[key].price = data.usd;
-        }
-
-        // pendyst is a special case
-        const response = await fetchNoCache(`https://api.dexscreener.com/latest/dex/tokens/${dystAddr}`)
-        const data = await response.json();
-        const pair = data.pairs.find(t => t.baseToken.symbol === 'DYST' && t.quoteToken.symbol === "penDYST");
-        rewards[penDystAddr].price = Number(pair.priceUsd / pair.priceNative);
-
-        // Try and get tokens there we couldn't get a price for
-        await getPricesFromDexScreener(rewards);
-    } catch (err) {
-        console.log(err);
-        await getPricesFromDexScreener(rewards);
-    }
-}
-
-const getPricesFromDexScreener = async (rewards) => {
-    for (const [address, rewardData] of Object.entries(rewards)) {
-        if (rewardData.price) {
-            continue;
-        }
-
-        const response = await fetchNoCache(`https://api.dexscreener.com/latest/dex/tokens/${address}`)
-        const data = await response.json();
-
-        if (data.pairs.length === 0) {
-            rewardData.price = Number(0);
-            continue;
-        }
-
-        let pair = data.pairs.find(t => t.baseToken.address ===  address);
-        if (pair) {
-            rewardData.price = Number(pair.priceUsd);
-        } else {
-            pair = data.pairs.find(t => t.quoteToken.address ===  address);
-            rewardData.price = Number(pair.priceUsd / pair.priceNative);
-        }
-    }
-}
-
-const addSymbols = async (web3, rewards) => {
-    for (const [address, rewardData] of Object.entries(rewards)) {
-        const tokenContract = new TokenContract(web3, address, null);
-        const symbol = await tokenContract.getSymbol();
-        rewardData.symbol = symbol;
-    }
-}
-
-const fetchPrices = async (addresses) => {
-    const response = await fetchNoCache(`https://api.coingecko.com/api/v3/simple/token_price/polygon-pos?contract_addresses=${addresses}&vs_currencies=usd`);
-    const data = await response.json();
-    return data;
-}
-
-const fetchNoCache = async (url) => {
-    return await fetch(url, {
-        headers: {
-            'Cache-Control': 'no-cache'
-        }
-    });
 }
