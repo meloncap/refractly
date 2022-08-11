@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
 import { ThemeProvider } from '@mui/material/styles';
 import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
 import LockedPenDashboard from './LockedPenDashboard';
@@ -13,6 +14,10 @@ import { createAlchemyWeb3 } from "@alch/alchemy-web3";
 import { useStickyState } from './useStickyState';
 import Web3 from 'web3';
 import RewardDashboard from './RewardDashboard';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
+import { truncateAddress } from './utils';
 
 const App = () => {
   const [account, setAccount] = useState(null);
@@ -59,9 +64,8 @@ const App = () => {
   const addressTextBoxStyle = {
     backgroundColor: "#1976d2",
     color: "#fff",
-    width: "250px",
-    height: "38px",
-    marginRight: "16px",
+    width: "225px",
+    height: "36.5px",
     borderRadius: "4px"
   }
 
@@ -77,19 +81,32 @@ const App = () => {
     setTabValue(newValue);
   }
 
+  const donationAddr = "0x6Fc5567Cd168b5531Abd76Ef61F0ef6cFe020fDE";
+
   return (
     <div className='main-app'>
       <BrowserRouter>
         <React.Fragment>
           {/* <h3 style={headerStyle}>Refractly</h3> */}
-          <Box sx={{display: "flex", justifyContent: "space-between"}}>
-            <div style={headerStyle}>Donations Appreciated: 0x6Fc5567Cd168b5531Abd76Ef61F0ef6cFe020fDE</div>
-            <Box sx={{display: "flex"}}>
-              {walletConnected ? null :
-                  <TextField style={addressTextBoxStyle} sx={{ input: { color: '#fff' } }} focus="false" id="wallet-input" placeholder="Wallet Address (View Only)" size="small" onChange={onWalletAddressChanged} />
-              }
-              <ConnectionButton onConnected={onConnected} onDisconnected={onDisconnected} style={connectionButtonStyle} />
-            </Box>
+          <Box sx={{display: "flex", justifyContent: "space-between", flexGrow: 1}}>
+            <div style={headerStyle}>
+              Donations Appreciated: {truncateAddress(donationAddr)}
+              <Tooltip title="Click to copy address">
+                <IconButton onClick={() => navigator.clipboard.writeText(donationAddr)} variant="contained" edge="end" sx={{color: "lightgrey" }}>
+                  <ContentCopyOutlinedIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
+            <Grid container item spacing={1} justifyContent="flex-end" sx={{maxWidth: "500px"}}>
+              <Grid item>
+                {walletConnected ? null :
+                    <TextField style={addressTextBoxStyle} sx={{ input: { color: '#fff' } }} focus="false" id="wallet-input" placeholder="Wallet Address (View Only)" size="small" onChange={onWalletAddressChanged} />
+                }
+              </Grid>
+              <Grid item>
+                <ConnectionButton onConnected={onConnected} onDisconnected={onDisconnected} style={connectionButtonStyle} />
+              </Grid>
+            </Grid>
           </Box>
           <Box sx={{display: "flex", justifyContent: "center"}}>
             <ThemeProvider theme={tabTheme}>
