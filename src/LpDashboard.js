@@ -44,23 +44,37 @@ const LpDashboard = ({ pools, prices, symbols }) => {
     pools = [];
   }
 
+  const getRewardTotal = (row) => {
+    let total = 0;
+    Object.entries(row.rewards).map((reward) => (
+      total += reward[1] * prices[reward[0]]
+    ));
+    return <Box>{formatAsUsd(total)}</Box>;
+  }
+
   return (
     <Container maxWidth="md">
       <Box sx={tableStyle}>
         <Box sx={innerTableStyle}>
           <Box sx={headerStyle}>
             <Grid container spacing={2} direction="row" justifyContent="center" alignItems="center">
-              <Grid item container xs={3} justifyContent="center" alignItems="center">
+              <Grid item container xs={2}>
                 Pool
               </Grid>
-              <Grid item container xs={3} justifyContent="center" alignItems="center">
+              <Grid item container xs={1}>
                 Type
               </Grid>
-              <Grid item container xs={3} justifyContent="center" alignItems="center">
+              <Grid item container xs={3}>
                 Tokens
               </Grid>
-              <Grid item container xs={3} justifyContent="center" alignItems="center">
+              <Grid item container xs={2}>
                 Balance
+              </Grid>
+              <Grid item container xs={2}>
+                Reward Tokens
+              </Grid>
+              <Grid item container xs={2}>
+                Rewards
               </Grid>
             </Grid>
           </Box>
@@ -68,20 +82,30 @@ const LpDashboard = ({ pools, prices, symbols }) => {
             {pools.map((row, i) => (
               <Box key={i} sx={{padding: "16px 12px", background: i % 2 === 0 ? "": "hsla(0,0%,100%,.05)", borderRadius: i % 2 === 0 ? "": "10px"}}>
                 <Grid container spacing={2} direction="row" justifyContent="center" alignItems="center" style={rowStyle}>
-                  <Grid item container xs={3} justifyContent="center" alignItems="center">
+                  <Grid item container xs={2}>
                     {symbols[row.token0]} ... {symbols[row.token1]}
                   </Grid>
-                  <Grid item container xs={3} justifyContent="center" alignItems="center">
+                  <Grid item container xs={1}>
                     {row.stable ? "S" : "V"}
                   </Grid>
-                  <Grid item container xs={3} justifyContent="center" alignItems="center">
+                  <Grid item container xs={3}>
                     <Box sx={{display: "block"}}>
                       <Box>{row.amount0.toFixed(3)} {symbols[row.token0]}</Box>
                       <Box>{row.amount1.toFixed(3)} {symbols[row.token1]}</Box>
                     </Box>
                   </Grid>
-                  <Grid item container xs={3} justifyContent="center" alignItems="center">
+                  <Grid item container xs={2}>
                     {formatAsUsd(row.amount0 * prices[row.token0] + row.amount1 * prices[row.token1])}
+                  </Grid>
+                  <Grid item container xs={2}>
+                    <Box sx={{display: "block"}}>
+                      {Object.entries(row.rewards).map((reward) => (
+                        <Box key={reward[0]}>{reward[1].toFixed(3)} {symbols[reward[0]]}</Box>
+                      ))}
+                    </Box>
+                  </Grid>
+                  <Grid item container xs={2}>
+                    {getRewardTotal(row)}
                   </Grid>
                 </Grid>
               </Box>

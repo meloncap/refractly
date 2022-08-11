@@ -111,20 +111,8 @@ const getPenDystRewards = async (contract) => {
 const getPoolsPositions = async (contract, web3) => {
     const positions = await contract.getStakingPoolsPositions();
 
-    const poolRewards = positions.reduce((basket, rewards) => {
-        for (const [, rewardData] of Object.entries(rewards.rewardTokens)) {
-            if (!basket[rewardData.rewardTokenAddress]) {
-                basket[rewardData.rewardTokenAddress] = {earned: Number(0), poolEarned: Number(0)};
-            }
-    
-            basket[rewardData.rewardTokenAddress].earned += Number(rewardData.earned);
-            basket[rewardData.rewardTokenAddress].poolEarned += Number(rewardData.earned);
-        }
-    
-        return basket;
-    }, {});
-
     const poolBalance = {};
+    const poolRewards = {};
     const pools = [];
     for (const position of positions) {
         const lpContract = new LPContract(web3, position.dystPoolAddress);
@@ -173,13 +161,27 @@ const getPoolsPositions = async (contract, web3) => {
         poolBalance[token0] += token0Amount;
         poolBalance[token1] += token1Amount;
 
-        pools.push({
+        let poolObj = {
             "token0": token0,
             "token1": token1,
             "amount0": token0Amount / 10 ** 18,
             "amount1": token1Amount / 10 ** 18,
             "stable": isStable,
-        })
+            "rewards": {}
+        };
+
+        for (const [, rewardData] of Object.entries(position.rewardTokens)) {
+            if (!poolRewards[rewardData.rewardTokenAddress]) {
+                poolRewards[rewardData.rewardTokenAddress] = {earned: Number(0), poolEarned: Number(0)};
+            }
+    
+            poolRewards[rewardData.rewardTokenAddress].earned += Number(rewardData.earned);
+            poolRewards[rewardData.rewardTokenAddress].poolEarned += Number(rewardData.earned);
+
+            poolObj.rewards[rewardData.rewardTokenAddress] = Number(rewardData.earned) / 10**18;
+        }
+
+        pools.push(poolObj);
     }
 
     return { pools, poolBalance, poolRewards};
