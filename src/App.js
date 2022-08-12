@@ -137,9 +137,8 @@ const App = () => {
           </Box>
           {/* <Grid container spacing={2} alignItems="center"> */}
           <Grid container spacing={2}>
-            <Grid item xs={12} lg={4} sx={{marginTop: "200px"}}>
+            <Grid item xs={12} lg={4}>
               <PortfolioContainer
-                sx={{width: "400px"}}
                 web3={web3}
                 account={account}
                 balances={balances}

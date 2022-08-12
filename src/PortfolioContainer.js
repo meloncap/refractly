@@ -4,10 +4,9 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import ActionDrawer from './ActionDrawer';
-import RewardPanel from './RewardPanel';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import Profile from './Profile';
-import { getProfile } from './profileFetcher';
+import ProfitButton from './ProfitButton';
 import { WriteContract } from './contracts/WriteContract';
 
 const PortfolioContainer = ({ account, web3, balances, rewards, prices, walletConnected, actionsDisabled, onRefreshHandler }) => {
@@ -63,8 +62,16 @@ const PortfolioContainer = ({ account, web3, balances, rewards, prices, walletCo
                             null
                             :
                             <Tooltip title="Claims all rewards from LPs, penDYST staking, and locked Pen">
-                                <Button onClick={getClaimHandler} variant="contained">Claim All Rewards</Button>
+                                <Button onClick={getClaimHandler} variant="contained">Claim All</Button>
                             </Tooltip>
+                        }
+                    </Grid>
+                    <Grid item>
+                        {!walletConnected
+                        ?
+                        null
+                        :
+                        <ProfitButton web3={web3} account={account}></ProfitButton>
                         }
                     </Grid>
                     <Grid item>
