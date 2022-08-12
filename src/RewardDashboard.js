@@ -49,8 +49,8 @@ const RewardDashboard = ({ account, web3, walletConnected, actionsDisabled, bala
 
   return (
     <React.Fragment>
-      <Grid container spacing={2}>
-        <Grid item>
+      {/* <Grid container spacing={2}> */}
+        {/* <Grid item>
           <Profile balances={balances} rewardData={rewards} prices={prices} />
           {actionsDisabled
             ?
@@ -94,11 +94,11 @@ const RewardDashboard = ({ account, web3, walletConnected, actionsDisabled, bala
               </Grid>
             </Grid>
           }
-        </Grid>
-        <Grid item xs={9} sm={2} md={4} lg={8} xl={8}>
-          <RewardPanel rewardData={rewards}></RewardPanel>
-        </Grid>
-      </Grid>
+        </Grid> */}
+        {/* <Grid item xs={9} sm={2} md={4} lg={4} xl={12}> */}
+          <RewardPanel rewardData={rewards} prices={prices} symbols={symbols}></RewardPanel>
+        {/* </Grid> */}
+      {/* </Grid> */}
       <ActionDrawer anchor="left"
         open={actionDrawerOpen}
         onClose={toggleDrawer(false)}

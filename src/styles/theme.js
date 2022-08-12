@@ -8,7 +8,8 @@ export const tabTheme = createTheme({
                 border: "4px solid #232d4fd1",
                 borderRadius: "1rem",
                 margin: "6px",
-                padding: "12px"
+                padding: "12px",
+                maxWidth: "700px",
             },
             indicator: {
                 display: "none"
@@ -20,7 +21,8 @@ export const tabTheme = createTheme({
             root: {
                 '@media (min-width:1023px)': {
                     margin: "6px",
-                    width: "300px",
+                    // width: "300px",
+                    width: "200px",
                     height: "60px",
                     fontSize: "18px",
                     fontWeight: "600px"
@@ -34,6 +36,11 @@ export const tabTheme = createTheme({
                     width: "120px",
                     height: "30px",
                     fontSize: "14px"
+                },
+                '@media (max-width:400px)': {
+                    width: "100px",
+                    height: "25px",
+                    fontSize: "12px"
                 },
                 margin: "6px",
                 border: "1px solid rgba(255, 255, 255, 0.3)",

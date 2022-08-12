@@ -10,7 +10,7 @@ const LpDashboard = ({ pools, prices, symbols }) => {
     backgroundImage:"radial-gradient(circle farthest-corner at 0 0,rgba(184,144,242,.61),rgba(38,125,255,.74) 52%,hsla(0,0%,100%,.2))",
     backgroundColor:"rgba(4,7,31,.8)",
     borderRadius:"1rem",
-    overflow:"hidden",
+    overflow:"hidden"
   }
 
   const innerTableStyle = {
@@ -53,11 +53,12 @@ const LpDashboard = ({ pools, prices, symbols }) => {
   }
 
   return (
-    <Container maxWidth="md">
+   <Container maxWidth="lg">
+      // {/* <Box className="table" sx={tableStyle}> */}
       <Box sx={tableStyle}>
         <Box sx={innerTableStyle}>
           <Box sx={headerStyle}>
-            <Grid container spacing={2} direction="row" justifyContent="center" alignItems="center">
+            <Grid item container spacing={2} direction="row" justifyContent="center" alignItems="center">
               <Grid item container xs={2}>
                 Pool
               </Grid>

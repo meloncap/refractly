@@ -2,6 +2,7 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import DisplayBoxTotal from './DisplayBoxTotal';
+import './Profile.css';
  
 const Profile = ( { balances, rewardData, prices }) => {
     const boxStyle={
@@ -14,8 +15,6 @@ const Profile = ( { balances, rewardData, prices }) => {
         borderRadius:"1rem",
         overflow:"hidden",
         maxHeight:"3000px",
-        maxWidth:"400px",
-        minWidth:"400px",
         marginLeft: "14px"
     }
 
@@ -40,7 +39,7 @@ const Profile = ( { balances, rewardData, prices }) => {
     const diviser = 10 ** 18;
 
     let totalBalance = 0;
-    if (balances) {
+    if (balances && prices) {
         Object.entries(balances).forEach(balance => {
             const address = balance[0];
             const data = balance[1];
@@ -49,7 +48,7 @@ const Profile = ( { balances, rewardData, prices }) => {
     }
 
     let earned = 0;
-    if (rewardData) {
+    if (rewardData && prices) {
         Object.entries(rewardData).forEach(reward => {
             const address = reward[0];
             const data = reward[1];
@@ -59,7 +58,7 @@ const Profile = ( { balances, rewardData, prices }) => {
     }    
 
     return (
-        <Box style={boxStyle}>
+        <Box className="container" style={boxStyle}>
             <Box style={innerBoxStyle}>
                 <p style={pStyle}>My Portfolio</p>
                 <Tooltip title={
