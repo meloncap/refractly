@@ -153,16 +153,16 @@ const ActionDrawer = (props) => {
       </div>
       <Grid container spacing={2} style={actionGridStyle} direction="column">
         <Grid item>
-          <ActionIcon action="Claim All Rewards" index={0} state={states[0]} onToggled={handleToggle}></ActionIcon>
+          <ActionIcon action="Claim All Rewards" index={0} state={states[0]} onToggled={handleToggle} switchable></ActionIcon>
         </Grid>
         <Grid item>
-          <ActionIcon action="Convert/Stake penDYST" index={1} state={states[1]} onToggled={handleToggle}></ActionIcon>
+          <ActionIcon action="Convert/Stake penDYST" index={1} state={states[1]} onToggled={handleToggle} switchable></ActionIcon>
         </Grid>
         <Grid item>
-          <ActionIcon action="Stake penDYST" index={2} state={states[2]} onToggled={handleToggle}></ActionIcon>
+          <ActionIcon action="Stake penDYST" index={2} state={states[2]} onToggled={handleToggle} switchable></ActionIcon>
         </Grid>
         <Grid item>
-          <ActionIcon action="Lock PEN" index={3} state={states[3]} onToggled={handleToggle}></ActionIcon>
+          <ActionIcon action="Lock PEN" index={3} state={states[3]} onToggled={handleToggle} switchable></ActionIcon>
         </Grid>
         <Grid item>
           <Tooltip title="Run pending actions">

@@ -16,6 +16,7 @@ const Profile = ( { balances, rewardData }) => {
         maxHeight:"3000px",
         maxWidth:"400px",
         minWidth:"400px",
+        marginLeft: "14px"
     }
 
     const innerBoxStyle={

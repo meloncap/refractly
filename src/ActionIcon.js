@@ -15,7 +15,7 @@ export const States = {
   Failed: "Failed"
 }
 
-const ActionIcon = ({ action, index, state, onToggled }) => {
+const ActionIcon = ({ action, index, state, onToggled, switchable }) => {
   const [checked, setChecked] = React.useState(true);
 
   const boxStyle = {
@@ -38,8 +38,20 @@ const ActionIcon = ({ action, index, state, onToggled }) => {
     justifyContent: "center"
   }
 
+  const noSwitchStyle = {
+    width: "5%",
+    display: "flex",
+    justifyContent: "center"
+  }
+
   const actionStyle = {
     width: "60%",
+    display: "flex",
+    justifyContent:"center"
+  }
+
+  const actionNoSwitchStyle = {
+    width: "75%",
     display: "flex",
     justifyContent:"center"
   }
@@ -67,12 +79,23 @@ const ActionIcon = ({ action, index, state, onToggled }) => {
 
   return (
     <Box style={boxStyle}>
-      <Box style={switchStyle}>
-        <Switch {...label} checked={checked} onChange={handleChange}/>
-      </Box>
-      <Box style={actionStyle}>
-        {action}
-      </Box>
+      { switchable 
+        ?
+        <Box style={switchStyle}>
+          <Switch {...label} checked={checked} onChange={handleChange}/>
+        </Box>
+        : <Box style={noSwitchStyle} />
+      }
+      { switchable 
+        ?
+        <Box style={actionStyle}>
+          {action}
+        </Box>
+        :
+        <Box style={actionNoSwitchStyle}>
+          {action}
+        </Box>
+      }
       <Box style={iconStyle}>
         {stateIcons[state]}
       </Box>

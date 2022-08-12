@@ -9,6 +9,7 @@ import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import Profile from './Profile';
 import { getProfile } from './profileFetcher';
 import { WriteContract } from './contracts/WriteContract';
+import ProfitButton from './ProfitButton';
 
 const RewardDashboard = ({ account, web3, walletConnected, actionsDisabled }) => {
   const [rewards, setRewards] = useState(null);
@@ -74,8 +75,16 @@ const RewardDashboard = ({ account, web3, walletConnected, actionsDisabled }) =>
                   null
                   :
                   <Tooltip title="Claims all rewards from LPs, penDYST staking, and locked Pen">
-                    <Button onClick={getClaimHandler} variant="contained">Claim All Rewards</Button>
+                    <Button onClick={getClaimHandler} variant="contained">Claim All</Button>
                   </Tooltip>
+                }
+              </Grid>
+              <Grid item>
+                {!walletConnected
+                  ?
+                  null
+                  :
+                  <ProfitButton web3={web3} account={account}></ProfitButton>
                 }
               </Grid>
               <Grid item>
