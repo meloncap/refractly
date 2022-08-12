@@ -95,7 +95,7 @@ const RewardDashboard = ({ account, web3, walletConnected, actionsDisabled }) =>
             </Grid>
           }
         </Grid>
-        <Grid item xs={9} sm={2} md={4} lg={8} xl={9}>
+        <Grid item xs={9} sm={2} md={4} lg={8} xl={8}>
           <RewardPanel rewardData={rewards}></RewardPanel>
         </Grid>
       </Grid>
