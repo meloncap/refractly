@@ -154,7 +154,7 @@ const App = () => {
               {/* <Grid item xs={8} justifyContent="center" alignItems="center"> */}
               {/* <Grid item xs={12} sm container> */}
             <Grid item container xs={12} lg={8} spacing={2} sx={{marginTop: "16px"}}>
-              <Grid item xs={12}>
+              <Grid item container xs={12} justifyContent="center">
                 <ThemeProvider theme={tabTheme}>
                   <Tabs value={tabValue} onChange={handleChange} centered style={tabsStyle}>
                       <Tab label='Dashboard' to='/' component={Link} />
@@ -165,7 +165,7 @@ const App = () => {
               </Grid>
               {/* </Grid> */}
               {/* <Grid item > */}
-              <Grid container item xs={12}>
+              <Grid item container xs={12}>
                 <Routes>
                   <Route index element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} balances={balances} rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
                   <Route path="/" element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} balances={balances} rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />

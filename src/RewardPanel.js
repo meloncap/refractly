@@ -17,7 +17,7 @@ const RewardPanel = ({
     }
 
     return (
-        <Grid container spacing={1}>
+        <Grid item container spacing={1} justifyContent="center">
             {Object.entries(rewardData).map((reward) => {
                 const address = reward[0];
                 const data = reward[1];
