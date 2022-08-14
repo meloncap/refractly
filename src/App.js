@@ -29,7 +29,7 @@ const App = () => {
   const [walletConnected, setWalletConnected] = useState(false);
   const [web3, setWeb3] = useState(null);
   const [actionsDisabled, setActionsDisabled] = useState(true);
-  const [tabValue, setTabValue] = useStickyState(0);
+  const [tabValue, setTabValue] = useStickyState(0, "tab");
   const [tokenPrices, setTokenPrices] = useState(null);
   const [tokenSymbols, setTokenSymbols] = useState(null);
   const [pools, setPools] = useState(null);
@@ -166,7 +166,7 @@ const App = () => {
               <Grid item container xs={12} justifyContent="center">
                 <ThemeProvider theme={tabTheme}>
                   <Tabs value={tabValue} onChange={handleChange} centered style={tabsStyle}>
-                      <Tab label='Rewards' to='/' component={Link} />
+                      <Tab label='Rewards' to='/rewards' component={Link} />
                       <Tab label='Locked PEN' to='/lockedPen' component={Link} />
                       <Tab label='LP Positions' to='/pools' component={Link} />
                   </Tabs>
@@ -175,7 +175,7 @@ const App = () => {
               <Grid item container xs={12}>
                 <Routes>
                   <Route index element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} balances={balances} rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
-                  <Route path="/" element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} balances={balances} rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
+                  <Route path="/rewards" element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} balances={balances} rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
                   <Route path="/lockedPen" element={<LockedPenDashboard account={account} web3={web3} prices={tokenPrices} />} />
                   {smallScreen ?
                   <Route path="/pools" element={<LpDashboardSmall pools={pools} prices={tokenPrices} symbols={tokenSymbols}  />} />
