@@ -49,56 +49,7 @@ const RewardDashboard = ({ account, web3, walletConnected, actionsDisabled, bala
 
   return (
     <React.Fragment>
-      {/* <Grid container spacing={2}> */}
-        {/* <Grid item>
-          <Profile balances={balances} rewardData={rewards} prices={prices} />
-          {actionsDisabled
-            ?
-            null
-            :
-            <Grid container spacing={2} style={buttonGridStyle}>
-              <Grid item>
-                {!walletConnected
-                  ?
-                  null
-                  :
-                <Tooltip title="Open drawer for more actions">
-                  <IconButton onClick={toggleDrawer(true)} variant="contained" style={{backgroundColor: "#1976d2", color: "#fff"}}>
-                    <MenuOutlinedIcon />
-                  </IconButton>
-                </Tooltip>
-                }
-              </Grid>
-              <Grid item>
-                {!walletConnected
-                  ?
-                  null
-                  :
-                  <Tooltip title="Claims all rewards from LPs, penDYST staking, and locked Pen">
-                    <Button onClick={getClaimHandler} variant="contained">Claim All</Button>
-                  </Tooltip>
-                }
-              </Grid>
-              <Grid item>
-                {!walletConnected
-                  ?
-                  null
-                  :
-                  <ProfitButton web3={web3} account={account}></ProfitButton>
-                }
-              </Grid>
-              <Grid item>
-                <Tooltip title="Refresh rewards">
-                  <Button onClick={getRewardHandler} variant="contained">Refresh</Button>
-                </Tooltip>
-              </Grid>
-            </Grid>
-          }
-        </Grid> */}
-        {/* <Grid item xs={9} sm={2} md={4} lg={4} xl={12}> */}
-          <RewardPanel rewardData={rewards} prices={prices} symbols={symbols}></RewardPanel>
-        {/* </Grid> */}
-      {/* </Grid> */}
+      <RewardPanel rewardData={rewards} prices={prices} symbols={symbols}></RewardPanel>
       <ActionDrawer anchor="left"
         open={actionDrawerOpen}
         onClose={toggleDrawer(false)}

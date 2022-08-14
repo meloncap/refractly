@@ -3,7 +3,7 @@ import { formatAsUsd } from './utils';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import './LockedPenDashboard.css';
+import './table.css';
 
 const LpDashboard = ({ pools, prices, symbols }) => {
   const tableStyle = {
@@ -53,8 +53,7 @@ const LpDashboard = ({ pools, prices, symbols }) => {
   }
 
   return (
-   <Container maxWidth="lg">
-      // {/* <Box className="table" sx={tableStyle}> */}
+   <Container maxWidth="md">
       <Box sx={tableStyle}>
         <Box sx={innerTableStyle}>
           <Box sx={headerStyle}>

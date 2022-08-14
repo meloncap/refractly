@@ -8,7 +8,7 @@ body {
   position: relative;
   z-index: 0;
   background-image: url('./background.png');
-  padding: 50px 5% 50px;
+  padding: 50px 2% 25px;
   height: -webkit-fit-content;
   height: -moz-fit-content;
   height: fit-content;

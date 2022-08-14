@@ -12,6 +12,7 @@ import { tabTheme } from './styles/theme';
 import ConnectionButton from './ConnectionButton';
 import { createAlchemyWeb3 } from "@alch/alchemy-web3";
 import { useStickyState } from './useStickyState';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Web3 from 'web3';
 import RewardDashboard from './RewardDashboard';
 import Tooltip from '@mui/material/Tooltip';
@@ -20,6 +21,7 @@ import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import { truncateAddress } from './utils';
 import { getProfile } from './profileFetcher';
 import LpDashboard from './LpDashboard';
+import LpDashboardSmall from './LpDashboardSmall';
 import PortfolioContainer from './PortfolioContainer';
 
 const App = () => {
@@ -31,10 +33,10 @@ const App = () => {
   const [tokenPrices, setTokenPrices] = useState(null);
   const [tokenSymbols, setTokenSymbols] = useState(null);
   const [pools, setPools] = useState(null);
-
-
   const [rewards, setRewards] = useState(null);
   const [balances, setBalances] = useState(null);
+
+  const smallScreen = useMediaQuery('(max-width:700px)');
 
   useEffect(() => {
     if (account && web3) {
@@ -135,7 +137,6 @@ const App = () => {
               </Grid>
             </Grid>
           </Box>
-          {/* <Grid container spacing={2} alignItems="center"> */}
           <Grid container spacing={2}>
             <Grid item xs={12} lg={4}>
               <PortfolioContainer
@@ -149,10 +150,6 @@ const App = () => {
                 onRefreshHandler={getRewardHandler}
               />
             </Grid>
-            {/* <Grid item xs={9} sm={2} md={4} lg={8} xl={9}> */}
-            {/* <Grid item sx={{marginTop: "50px"}} xs={8} direction="row" justifyContent="center" alignItems="center"> */}
-              {/* <Grid item xs={8} justifyContent="center" alignItems="center"> */}
-              {/* <Grid item xs={12} sm container> */}
             <Grid item container xs={12} lg={8} spacing={2} sx={{marginTop: "16px"}}>
               <Grid item container xs={12} justifyContent="center">
                 <ThemeProvider theme={tabTheme}>
@@ -163,35 +160,20 @@ const App = () => {
                   </Tabs>
                 </ThemeProvider>
               </Grid>
-              {/* </Grid> */}
-              {/* <Grid item > */}
               <Grid item container xs={12}>
                 <Routes>
                   <Route index element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} balances={balances} rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
                   <Route path="/" element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} balances={balances} rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
                   <Route path="/lockedPen" element={<LockedPenDashboard account={account} web3={web3} />} />
+                  {smallScreen ?
+                  <Route path="/pools" element={<LpDashboardSmall pools={pools} prices={tokenPrices} symbols={tokenSymbols}  />} />
+                  :
                   <Route path="/pools" element={<LpDashboard pools={pools} prices={tokenPrices} symbols={tokenSymbols}  />} />
+                  }
                 </Routes>
-              {/* </Grid> */}
               </Grid>
             </Grid>
-            {/* </Grid> */}
           </Grid>
-          {/* <Box sx={{display: "flex", justifyContent: "center"}}>
-            <ThemeProvider theme={tabTheme}>
-              <Tabs value={tabValue} onChange={handleChange} centered style={tabsStyle}>
-                  <Tab label='Dashboard' to='/' component={Link} />
-                  <Tab label='Locked PEN' to='/lockedPen' component={Link} />
-                  <Tab label='LP Positions' to='/pools' component={Link} />
-              </Tabs>
-            </ThemeProvider>
-          </Box>
-          <Routes>
-            <Route index element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} balances={balances} rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
-            <Route path="/" element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} balances={balances} rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
-            <Route path="/lockedPen" element={<LockedPenDashboard account={account} web3={web3} />} />
-            <Route path="/pools" element={<LpDashboard pools={pools} prices={tokenPrices} symbols={tokenSymbols}  />} />
-          </Routes> */}
         </React.Fragment>
       </BrowserRouter>
     </div>

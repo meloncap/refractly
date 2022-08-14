@@ -5,7 +5,7 @@ import { formatAsUsd } from './utils';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import './LockedPenDashboard.css';
+import './table.css';
 
 const LockedPenDashboard = ({ account, web3 }) => {
   const [lockData, setLockData] = useState([]);
