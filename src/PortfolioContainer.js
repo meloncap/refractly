@@ -75,7 +75,7 @@ const PortfolioContainer = ({ account, web3, balances, rewards, prices, walletCo
                         }
                     </Grid>
                     <Grid item>
-                        <Tooltip title="Refresh rewards">
+                        <Tooltip title="Refresh data">
                             <Button onClick={getRewardHandler} variant="contained">Refresh</Button>
                         </Tooltip>
                     </Grid>

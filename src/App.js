@@ -176,7 +176,7 @@ const App = () => {
                 <Routes>
                   <Route index element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} balances={balances} rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
                   <Route path="/" element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} balances={balances} rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
-                  <Route path="/lockedPen" element={<LockedPenDashboard account={account} web3={web3} />} />
+                  <Route path="/lockedPen" element={<LockedPenDashboard account={account} web3={web3} prices={tokenPrices} />} />
                   {smallScreen ?
                   <Route path="/pools" element={<LpDashboardSmall pools={pools} prices={tokenPrices} symbols={tokenSymbols}  />} />
                   :
