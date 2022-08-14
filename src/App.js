@@ -57,6 +57,7 @@ const App = () => {
 
   const onConnected = (web3, account) => {
     setWalletConnected(true);
+    resetData();
     setAccount(account);
     setWeb3(web3);
     setActionsDisabled(false);
@@ -64,9 +65,7 @@ const App = () => {
 
   const onDisconnected = () => {
     setWalletConnected(false);
-    setAccount(null);
-    setWeb3(null);
-    setActionsDisabled(true);
+    reset();
   }
 
   const onWalletAddressChanged = async (event) => {
@@ -80,10 +79,23 @@ const App = () => {
       setActionsDisabled(false);
     }
     else {
-      setAccount(null);
-      setWeb3(null);
-      setActionsDisabled(true);
+      reset();
     }
+  }
+
+  const reset = () => {
+    setAccount(null);
+    setWeb3(null);
+    setActionsDisabled(true);
+    resetData();
+  }
+
+  const resetData = () => {
+    setRewards(null);
+    setBalances(null);
+    setPools(null);
+    setTokenPrices(null);
+    setTokenSymbols(null);
   }
 
   const connectionButtonStyle = {
