@@ -166,7 +166,7 @@ const App = () => {
               <Grid item container xs={12} justifyContent="center">
                 <ThemeProvider theme={tabTheme}>
                   <Tabs value={tabValue} onChange={handleChange} centered style={tabsStyle}>
-                      <Tab label='Dashboard' to='/' component={Link} />
+                      <Tab label='Rewards' to='/' component={Link} />
                       <Tab label='Locked PEN' to='/lockedPen' component={Link} />
                       <Tab label='LP Positions' to='/pools' component={Link} />
                   </Tabs>
