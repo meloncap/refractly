@@ -7,24 +7,16 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import './table.css';
 
-const LockedPenDashboard = ({ account, web3 }) => {
+const LockedPenDashboard = ({ account, web3, prices }) => {
   const [lockData, setLockData] = useState([]);
 
   useEffect(() => {
-    if (account && web3) {
+    if (account && web3 && prices) {
       getLockData();
     } else {
       setLockData([]);
     }
-  }, [account, web3]);
-
-  const fetchNoCache = async (url) => {
-    return await fetch(url, {
-        headers: {
-            'Cache-Control': 'no-cache'
-        }
-    });
-  }
+  }, [account, web3, prices]);
 
   const getLockData = () => {
     const contract = new ReadContract(web3, account);
@@ -32,25 +24,19 @@ const LockedPenDashboard = ({ account, web3 }) => {
       .then(data => {
         var locks = [];
 
-        fetchNoCache(`https://api.coingecko.com/api/v3/simple/token_price/polygon-pos?contract_addresses=${penAddr}&vs_currencies=usd`)
-          .then(response => {
-            response.json()
-              .then(prices => {
-                data.locks.forEach(lock => {
-                  var d = new Date(0);
-                  d.setUTCSeconds(lock.unlockTime);
-                  locks.push({
-                    amount: lock.amount / 10**18,
-                    unlockTime: lock.unlockTime,
-                    unlockDate: d,
-                    price: prices[penAddr.toLowerCase()].usd,
-                    disabled: d > new Date()
-                  });
-                });
-
-                setLockData(locks);
-              });
+        data.locks.forEach(lock => {
+          var d = new Date(0);
+          d.setUTCSeconds(lock.unlockTime);
+          locks.push({
+            amount: lock.amount / 10**18,
+            unlockTime: lock.unlockTime,
+            unlockDate: d,
+            price: prices[penAddr],
+            disabled: d > new Date()
           });
+        });
+
+        setLockData(locks);
       });
   }
 
