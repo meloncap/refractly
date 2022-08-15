@@ -22,6 +22,22 @@ export class WriteContract {
         });
     }
 
+    claimLpRewards = async () => {
+      console.log('Start claimStakingRewards')
+      return new Promise((resolve, reject) => {
+          this.contract.methods.claimStakingRewards().send({ from: this.account, gasPrice: '35000000000' /* 35 */ })
+              .on('receipt', function(receipt){
+                  console.log('Done claimStakingRewards')
+                  console.log(receipt);
+                  resolve(receipt);
+              })
+              .on('error', function(error, receipt) {
+                  console.log("Error occured in transaction: ", error)
+                  reject(error);
+              });
+      });
+    }
+
     convertDystToPenDystAndStake = async () => {
         console.log('Start convertDystToPenDystAndStake')
         return new Promise((resolve, reject) => {

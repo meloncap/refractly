@@ -12,13 +12,22 @@ const RewardPanel = ({
 
     const diviser = 10 ** 18;
 
-    if (!rewardData) {
-        rewardData = {};
+    let sortedRewards = [];
+
+    if (rewardData && prices) {
+        for (var address in rewardData) {
+            rewardData[address].rewardAmount = rewardData[address].earned / diviser * prices[address];
+            sortedRewards.push([address, rewardData[address]]);
+        }
+
+        sortedRewards.sort(function(a, b) {
+            return b[1].rewardAmount - a[1].rewardAmount;
+        });
     }
 
     return (
         <Grid item container spacing={1} justifyContent="center">
-            {Object.entries(rewardData).map((reward) => {
+            {sortedRewards.map((reward) => {
                 const address = reward[0];
                 const data = reward[1];
                 const rewards = data.earned / diviser;
@@ -46,7 +55,7 @@ const RewardPanel = ({
                                 header={`${symbols[address]}`}
                                 reward={rewards}
                                 rewardLabel={symbols[address]}
-                                rewardAmount={rewards * prices[address]}
+                                rewardAmount={data.rewardAmount}
                             ></DisplayBox>
                         </Tooltip>
                     </Grid>

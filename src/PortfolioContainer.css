@@ -1,0 +1,25 @@
+@media (max-width:400px) {
+    .prices {
+        min-width: 340px;
+        max-width: 340px;
+    }
+}
+
+@media (min-width:401px) {
+    .prices {
+        min-width: 400px;
+        max-width: 400px;
+    }
+}
+
+@media (max-width:1023px) {
+    .portfolio-container {
+        margin-top: 0px !important;
+    }
+}
+
+@media (min-width:1024px) {
+    .portfolio-container {
+        margin-top: 90px !important;
+    }
+}

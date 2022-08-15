@@ -20,10 +20,17 @@ export const formatAsPercent = (num) => {
   }).format(num);
 };
 
-export const formatAsUsd = (amount) => {
-  return new Intl.NumberFormat('en-US', {
+export const formatAsUsd = (amount, digits) => {
+  let format = {
     style: 'currency',
     currency: 'USD',
-  }).format(amount);
+  }
+  
+  if (digits) {
+    format['minimumFractionDigits'] = digits;
+    format['maximumFractionDigits'] = digits;
+  }
+
+  return new Intl.NumberFormat('en-US', format).format(amount);
 };
   
