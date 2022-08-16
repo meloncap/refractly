@@ -23,6 +23,7 @@ import { getProfile } from './profileFetcher';
 import LpDashboard from './LpDashboard';
 import LpDashboardSmall from './LpDashboardSmall';
 import PortfolioContainer from './PortfolioContainer';
+// import Donations from './Donations';
 
 const App = () => {
   const [account, setAccount] = useState(null);
@@ -157,6 +158,7 @@ const App = () => {
                 balances={balances}
                 rewards={rewards}
                 prices={tokenPrices}
+                symbols={tokenSymbols}
                 walletConnected={walletConnected}
                 actionsDisabled={actionsDisabled}
                 onRefreshHandler={getRewardHandler}
@@ -169,6 +171,7 @@ const App = () => {
                       <Tab label='Rewards' to='/rewards' component={Link} />
                       <Tab label='Locked PEN' to='/lockedPen' component={Link} />
                       <Tab label='LP Positions' to='/pools' component={Link} />
+                      {/* <Tab label='Donate' to='/donate' component={Link} /> */}
                   </Tabs>
                 </ThemeProvider>
               </Grid>
@@ -182,6 +185,7 @@ const App = () => {
                   :
                   <Route path="/pools" element={<LpDashboard pools={pools} prices={tokenPrices} symbols={tokenSymbols}  />} />
                   }
+                  {/* <Route path="/donate" element={<Donations />} /> */}
                 </Routes>
               </Grid>
             </Grid>

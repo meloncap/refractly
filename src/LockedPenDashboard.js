@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ReadContract } from './contracts/ReadContract';
-import { penAddr } from './profileFetcher';
+import { penAddr } from './addresses';
 import { formatAsUsd } from './utils';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';

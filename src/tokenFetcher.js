@@ -1,5 +1,5 @@
 import { TokenContract } from "./contracts/TokenContract";
-import { dystAddr, penDystAddr } from "./profileFetcher";
+import { dystAddr, penDystAddr } from "./addresses";
 
 export const addPrices = async (tokenObj) => {
     try {

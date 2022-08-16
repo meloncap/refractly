@@ -9,7 +9,7 @@ import Tooltip from '@mui/material/Tooltip';
 import ActionIcon, { States } from './ActionIcon';
 import { TokenContract } from "./contracts/TokenContract";
 import { WriteContract } from "./contracts/WriteContract";
-import { dystAddr, penDystAddr, penAddr } from './profileFetcher';
+import { dystAddr, penDystAddr, penAddr } from './addresses';
 
 const ActionDrawer = (props) => {
   const [states, setStates] = useState({0: States.Pending, 1: States.Pending, 2: States.Pending, 3: States.Pending});

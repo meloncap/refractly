@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import DisplayBoxTotal from './DisplayBoxTotal';
 import './Profile.css';
+import { dystAddr, penAddr, vIPenAddr } from './addresses';
  
 const Profile = ( { balances, rewardData, prices }) => {
     const boxStyle={
@@ -39,12 +40,22 @@ const Profile = ( { balances, rewardData, prices }) => {
     const diviser = 10 ** 18;
 
     let totalBalance = 0;
+    let stakedPenDyst = 0;
+    let lockedPen = 0;
     if (balances && prices) {
         Object.entries(balances).forEach(balance => {
             const address = balance[0];
+
+            if (address === "stakedPenDyst") {
+                return;
+            }
+
             const data = balance[1];
             totalBalance += data / 10 ** 18 * prices[address];
         });
+
+        stakedPenDyst = balances["stakedPenDyst"] / 10**18 * prices[dystAddr];
+        lockedPen = balances[vIPenAddr] / 10**18 * prices[penAddr];
     }
 
     let earned = 0;
@@ -74,14 +85,32 @@ const Profile = ( { balances, rewardData, prices }) => {
                     <DisplayBoxTotal
                         header="Portfolio Value"
                         value={totalBalance}
+                        sx={{minWidth: "270px", maxWidth: "270x"}}
                     ></DisplayBoxTotal>
                 </Tooltip>
                 <Tooltip title="Rewards that have not been claimed yet">
                     <DisplayBoxTotal
                         header="Unclaimed Rewards"
                         value={earned}
+                        sx={{minWidth: "270px", maxWidth: "270x"}}
                     ></DisplayBoxTotal>
                 </Tooltip>
+                <Box sx={{display: "flex"}}>
+                    <Tooltip title="Staked penDYST balance">
+                        <DisplayBoxTotal
+                            header="Staked penDYST"
+                            value={stakedPenDyst}
+                            sx={{minWidth: "131px", maxWidth: "131px", marginRight: "8px"}}
+                        ></DisplayBoxTotal>
+                    </Tooltip>
+                    <Tooltip title="Locked PEN Balance">
+                        <DisplayBoxTotal
+                            header="Locked PEN"
+                            value={lockedPen}
+                            sx={{minWidth: "131px", maxWidth: "131px"}}
+                        ></DisplayBoxTotal>
+                    </Tooltip>
+                </Box>
             </Box>
         </Box>
     )

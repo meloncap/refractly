@@ -9,11 +9,11 @@ import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import Profile from './Profile';
 import ProfitButton from './ProfitButton';
 import { WriteContract } from './contracts/WriteContract';
-import { dystAddr, penAddr, penDystAddr } from './addresses';
+import { dystAddr, penAddr, penDystAddr, vIPenAddr } from './addresses';
 import { formatAsUsd } from './utils';
 import './PortfolioContainer.css'
 
-const PortfolioContainer = ({ account, web3, balances, rewards, prices, walletConnected, actionsDisabled, onRefreshHandler }) => {
+const PortfolioContainer = ({ account, web3, balances, rewards, prices, symbols, walletConnected, actionsDisabled, onRefreshHandler }) => {
     const [actionDrawerOpen, setActionDrawerOpen] = useState(false);
 
     const getRewardHandler = async () => {
@@ -48,8 +48,8 @@ const PortfolioContainer = ({ account, web3, balances, rewards, prices, walletCo
     }
 
     const pricesStyle = {
-        fontSize: "24px",
-        lineHeight: "33px",
+        fontSize: "18px",
+        lineHeight: "22px",
         margin: "0px",
         fontWeight: "400"
     }
@@ -57,17 +57,19 @@ const PortfolioContainer = ({ account, web3, balances, rewards, prices, walletCo
     let dystPrice = 0;
     let penPrice = 0;
     let penDystPrice = 0;
+    let DystPenDystRatio = 0;
 
-    if (prices) {
+    if (prices && balances) {
         dystPrice = prices[dystAddr];
         penPrice = prices[penAddr];
         penDystPrice = prices[penDystAddr];
+        DystPenDystRatio = dystPrice / penDystPrice;
     }
 
     return (
         <>
             <Grid item container className="portfolio-container" spacing={2} justifyContent="center">
-                <Grid item container spacing={5} style={buttonGridStyle} sx={{color: "#fff"}}>
+                <Grid item container spacing={3} sx={{color: "#fff", justifyContent: "center"}}>
                     <Grid item>
                         <Box>
                             <Box style={priceTitleStyle}>PEN</Box>
@@ -84,6 +86,12 @@ const PortfolioContainer = ({ account, web3, balances, rewards, prices, walletCo
                         <Box>
                             <Box style={priceTitleStyle}>penDYST</Box>
                             <Box><h5 style={pricesStyle}>{formatAsUsd(penDystPrice, 4)}</h5></Box>
+                        </Box>
+                    </Grid>
+                    <Grid item>
+                        <Box>
+                            <Box style={priceTitleStyle}>penDYST:DYST</Box>
+                            <Box><h5 style={pricesStyle}>{DystPenDystRatio.toFixed(2)}</h5></Box>
                         </Box>
                     </Grid>
                 </Grid>
@@ -132,7 +140,7 @@ const PortfolioContainer = ({ account, web3, balances, rewards, prices, walletCo
                         ?
                         null
                         :
-                        <ProfitButton web3={web3} account={account}></ProfitButton>
+                        <ProfitButton web3={web3} account={account} symbols={symbols}></ProfitButton>
                         }
                     </Grid>
                     <Grid item>

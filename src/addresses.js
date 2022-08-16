@@ -1,6 +1,7 @@
 export const dystAddr = "0x39aB6574c289c3Ae4d88500eEc792AB5B947A5Eb";
 export const penAddr = "0x9008D70A5282a936552593f410AbcBcE2F891A97";
 export const penDystAddr = "0x5b0522391d0A5a37FD117fE4C43e8876FB4e91E6";
+export const vIPenAddr = "0x55CA76E0341ccD35c2E3F34CbF767C6102aea70f";
 export const usdtAddr = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 export const usdcAddr = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174";
 export const usdPlusAddr = "0x236eeC6359fb44CCe8f97E99387aa7F8cd5cdE1f";

@@ -7,18 +7,19 @@ import IconButton from '@mui/material/IconButton';
 import ActionIcon, { States } from './ActionIcon';
 import { RouterContract } from "./contracts/RouterContract";
 import { TokenContract } from "./contracts/TokenContract";
-import { dystAddr, penAddr, wmaticAddr, usdcAddr } from './addresses';
+import { dystAddr, penAddr, usdPlusAddr, wmaticAddr } from './addresses';
+import { determineRoute } from './tokenRouter';
 
 const TakeProfitDrawer = (props) => {
   const [states, setStates] = useState({0: States.Pending, 1: States.Pending, 2: States.Pending, 3: States.Pending});
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (props.open) {
+    if (props.open && props.web3 && props.account && props.token && props.symbols) {
       resetActions();
       runActions();
     }
-  }, [props.open])
+  }, [props.open, props.web3, props.account, props.token, props.symbols])
 
   const modifyState = (index, newStateValue, setStateFn) => {
     setStateFn(previousState => ({ ...previousState, [index]: newStateValue }));
@@ -33,16 +34,18 @@ const TakeProfitDrawer = (props) => {
     const contract = new RouterContract(props.web3, props.account);
     setError(null);
 
-    await swapToken(contract, dystAddr, 0, 1);
-    await swapToken(contract, penAddr, 2, 3);
+    const toToken = Object.keys(props.symbols).find(key => props.symbols[key] === props.token);
+
+    await swapToken(contract, dystAddr, toToken, [wmaticAddr, usdPlusAddr], 0, 1);
+    await swapToken(contract, penAddr, toToken, [wmaticAddr, usdPlusAddr], 2, 3);
   }
 
-  const swapToken = async (routerContract, tokenAddr, state0, state1) => {
+  const swapToken = async (routerContract, fromToken, toToken, middleTokens, state0, state1) => {
 
     try {
       modifyState(state0, States.Running, setStates);
 
-      const tokenContract = new TokenContract(props.web3, tokenAddr, props.account);
+      const tokenContract = new TokenContract(props.web3, fromToken, props.account);
       const balance = await tokenContract.getBalanceOf();
 
       if (balance > 0) {
@@ -56,20 +59,16 @@ const TakeProfitDrawer = (props) => {
 
         try {
           modifyState(state1, States.Running, setStates);
-          let routes = [];
 
-          const amountOut0 = await routerContract.getAmountOut(balance, tokenAddr, wmaticAddr);
-          routes.push({from: tokenAddr, to: wmaticAddr, stable: amountOut0.stable});
-    
-          const amountOut1 = await routerContract.getAmountOut(amountOut0.amount, wmaticAddr, usdcAddr);
-          routes.push({from: wmaticAddr, to: usdcAddr, stable: amountOut1.stable});
+          const { amount, routes } = await determineRoute(routerContract, fromToken, toToken, balance, middleTokens);
 
           const amounts = await routerContract.swapExactTokensForTokens(
             balance,
-            amountOut1.amount,
+            amount,
             routes
           );
           console.log(amounts);
+
           modifyState(state1, States.Completed, setStates);
         } catch (error) {
           modifyState(state1, States.Failed, setStates);
@@ -133,13 +132,13 @@ const TakeProfitDrawer = (props) => {
           <ActionIcon action="Approve Spending of DYST" index={0} state={states[0]}></ActionIcon>
         </Grid>
         <Grid item>
-          <ActionIcon action="Swap DYST for USDC" index={1} state={states[1]}></ActionIcon>
+          <ActionIcon action={"Swap DYST for " + props.token} index={1} state={states[1]}></ActionIcon>
         </Grid>
         <Grid item>
           <ActionIcon action="Approve Spending of PEN" index={2} state={states[2]}></ActionIcon>
         </Grid>
         <Grid item>
-          <ActionIcon action="Swap PEN for USDC" index={3} state={states[3]}></ActionIcon>
+          <ActionIcon action={"Swap PEN for " + props.token} index={3} state={states[3]}></ActionIcon>
         </Grid>
         {error ?
         <Grid item>

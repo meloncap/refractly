@@ -13,8 +13,6 @@ const DisplayBoxTotal = React.forwardRef((props, ref) => {
         borderRadius:"1rem",
         overflow:"hidden",
         maxHeight:"180px",
-        maxWidth:"270px",
-        minWidth:"270px",
         marginBottom:"8px"
     }
 
