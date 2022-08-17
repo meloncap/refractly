@@ -1,37 +1,37 @@
+import { BaseReadContract } from '../base/BaseReadContract';
 import readContractABI from './read-contract.json';
 
-export class ReadContract {
+export class PenroseReadContract extends BaseReadContract {
     constructor(web3, account) {
-        this.account = account;
-        this.contract = new web3.eth.Contract(readContractABI, "0x1432c3553fdf7fbd593a84b3a4d380c643cbf7a2");
+        super(web3, account, "0x1432c3553fdf7fbd593a84b3a4d380c643cbf7a2", readContractABI);
     }
 
-    getDystWalletBalance = async () => {
+    getDexTokenWalletBalance = async () => {
         const dystBalance = await this.contract.methods.dystBalanceOf(this.account).call();
         return Number(dystBalance);
     }
     
-    getPenDystWalletBalance = async () => {
+    getOptimizerTokenWalletBalance = async () => {
         const penDystBalance = await this.contract.methods.penDystBalanceOf(this.account).call();
         return Number(penDystBalance);
     }
     
-    getPenDystStakedBalance = async () => {
+    getOptimizerTokenStakedBalance = async () => {
         const penDystBalance =  await this.contract.methods.stakedPenDystBalanceOf(this.account).call();
         return Number(penDystBalance);
     }
     
-    getLockedPenData = async () => {
+    getOptimizerLockTokenData = async () => {
         const userProxy = await this.contract.methods.userProxyByAccount(this.account).call();
         const lockedData = await this.contract.methods.vlPenLocksData(userProxy).call();
         return lockedData;
     }
 
-    getVlPenRewardTokenPositionsOf = async () => {
+    getOptimizerLockTokenRewards = async () => {
         return await this.contract.methods.vlPenRewardTokenPositionsOf(this.account).call();
     }
     
-    getPenDystRewardPoolPosition = async () => {
+    getOptimizerTokenRewards = async () => {
         return await this.contract.methods.penDystRewardPoolPosition(this.account).call();
     }
     

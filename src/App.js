@@ -7,28 +7,30 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { ThemeProvider } from '@mui/material/styles';
 import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
-import LockedPenDashboard from './LockedPenDashboard';
+import LockedPenDashboard from './components/polygon/LockedPenDashboard';
 import { tabTheme } from './styles/theme';
-import ConnectionButton from './ConnectionButton';
+import ConnectionButton from './components/base/ConnectionButton';
 import { createAlchemyWeb3 } from "@alch/alchemy-web3";
-import { useStickyState } from './useStickyState';
+import { useStickyState } from './utils/useStickyState';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Web3 from 'web3';
-import RewardDashboard from './RewardDashboard';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
-import { truncateAddress } from './utils';
-import { getProfile } from './profileFetcher';
-import LpDashboard from './LpDashboard';
-import LpDashboardSmall from './LpDashboardSmall';
-import PortfolioContainer from './PortfolioContainer';
+import { truncateAddress } from './utils/utils';
+import { getPolygonProfile } from './polygonProfileFetcher';
+import LpDashboard from './components/base/LpDashboard';
+import LpDashboardSmall from './components/base/LpDashboardSmall';
+import PenroseRewardDashboard from './components/polygon/PenroseRewardDashboard';
+import PenrosePortfolioContainer from './components/polygon/PenrosePortfolioContainer';
+import { ChainHex } from './utils/chains';
 // import Donations from './Donations';
 
 const App = () => {
   const [account, setAccount] = useState(null);
   const [walletConnected, setWalletConnected] = useState(false);
   const [web3, setWeb3] = useState(null);
+  const [chainId, setChainId] = useState();
   const [actionsDisabled, setActionsDisabled] = useState(true);
   const [tabValue, setTabValue] = useStickyState(0, "tab");
   const [tokenPrices, setTokenPrices] = useState(null);
@@ -41,12 +43,14 @@ const App = () => {
 
   useEffect(() => {
     if (account && web3) {
-      getRewardHandler();
+      if (chainId === ChainHex.Polygon) {
+        getRewardHandler();
+      }
     }
-  }, [account, web3]);
+  }, [account, web3, chainId]);
 
   const getRewardHandler = async () => {
-    getProfile(web3, account)
+    getPolygonProfile(web3, account)
       .then(profile => {
         setRewards(profile.rewards);
         setBalances(profile.balances);
@@ -56,17 +60,26 @@ const App = () => {
       });
   }
 
-  const onConnected = (web3, account) => {
+  const onConnected = (web3, account, hexChainId) => {
     setWalletConnected(true);
     resetData();
     setAccount(account);
     setWeb3(web3);
+    setChainId(hexChainId);
     setActionsDisabled(false);
   }
 
   const onDisconnected = () => {
     setWalletConnected(false);
     reset();
+  }
+
+  const onChainChanged = (hexChainId) => {
+    setChainId(hexChainId);
+    resetData();
+    if (hexChainId == ChainHex.Polygon) {
+      getRewardHandler();
+    }
   }
 
   const onWalletAddressChanged = async (event) => {
@@ -87,6 +100,7 @@ const App = () => {
   const reset = () => {
     setAccount(null);
     setWeb3(null);
+    setChainId(null);
     setActionsDisabled(true);
     resetData();
   }
@@ -146,13 +160,13 @@ const App = () => {
                 }
               </Grid>
               <Grid item>
-                <ConnectionButton onConnected={onConnected} onDisconnected={onDisconnected} style={connectionButtonStyle} />
+                <ConnectionButton onConnected={onConnected} onDisconnected={onDisconnected} onChainChanged={onChainChanged} style={connectionButtonStyle} />
               </Grid>
             </Grid>
           </Box>
           <Grid container spacing={2}>
             <Grid item xs={12} lg={4}>
-              <PortfolioContainer
+              <PenrosePortfolioContainer
                 web3={web3}
                 account={account}
                 balances={balances}
@@ -177,8 +191,8 @@ const App = () => {
               </Grid>
               <Grid item container xs={12}>
                 <Routes>
-                  <Route index element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} balances={balances} rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
-                  <Route path="/rewards" element={<RewardDashboard account={account} web3={web3} walletConnected={walletConnected} actionsDisabled={actionsDisabled} balances={balances} rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
+                  <Route index element={<PenroseRewardDashboard rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
+                  <Route path="/rewards" element={<PenroseRewardDashboard rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
                   <Route path="/lockedPen" element={<LockedPenDashboard account={account} web3={web3} prices={tokenPrices} />} />
                   {smallScreen ?
                   <Route path="/pools" element={<LpDashboardSmall pools={pools} prices={tokenPrices} symbols={tokenSymbols}  />} />

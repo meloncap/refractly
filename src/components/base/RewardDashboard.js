@@ -1,23 +1,25 @@
 import React from 'react';
 import Grid from '@mui/material/Grid';
-import DisplayBox from './DisplayBox';
+import RewardDisplay from './display-boxes/RewardDisplay';
 import Tooltip from '@mui/material/Tooltip';
-import { formatAsPercent } from './utils';
+import { formatAsPercent } from '../../utils/utils';
 
-const RewardPanel = ({
-    rewardData,
+const RewardDashboard = ({
+    rewards,
     prices,
-    symbols
+    symbols,
+    optimizerVoteTokenName,
+    optimizerLockTokenName,
 }) => {
 
     const diviser = 10 ** 18;
 
     let sortedRewards = [];
 
-    if (rewardData && prices) {
-        for (var address in rewardData) {
-            rewardData[address].rewardAmount = rewardData[address].earned / diviser * prices[address];
-            sortedRewards.push([address, rewardData[address]]);
+    if (rewards && prices) {
+        for (var address in rewards) {
+            rewards[address].rewardAmount = rewards[address].earned / diviser * prices[address];
+            sortedRewards.push([address, rewards[address]]);
         }
 
         sortedRewards.sort(function(a, b) {
@@ -33,13 +35,13 @@ const RewardPanel = ({
                 const rewards = data.earned / diviser;
 
                 let poolPercent = 0;
-                let penDystPercent = 0;
-                let vIPenPercent = 0;
+                let optimizerVotePercent = 0;
+                let optimizerLockPercent = 0;
                 
                 if (rewards > 0) {
                     poolPercent = (data.poolEarned / diviser) / rewards;
-                    penDystPercent = (data.penDystEarned / diviser) / rewards;
-                    vIPenPercent = (data.vIPenEarned / diviser) / rewards;
+                    optimizerVotePercent = (data.optimizerVoteEarned / diviser) / rewards;
+                    optimizerLockPercent = (data.optimizerLockEarned / diviser) / rewards;
                 }
 
                 return (
@@ -47,16 +49,16 @@ const RewardPanel = ({
                         <Tooltip enterDelay={500} enterNextDelay={500} title={
                             <React.Fragment>
                             <b>Pool Staking: </b>{formatAsPercent(poolPercent)}<br></br>
-                            <b>penDYST Staking: </b>{formatAsPercent(penDystPercent)}<br></br>
-                            <b>vIPEN Locking: </b>{formatAsPercent(vIPenPercent)}
+                            <b>{optimizerVoteTokenName} Staking: </b>{formatAsPercent(optimizerVotePercent)}<br></br>
+                            <b>{optimizerLockTokenName} Locking: </b>{formatAsPercent(optimizerLockPercent)}
                             </React.Fragment>
                         }>
-                            <DisplayBox
+                            <RewardDisplay
                                 header={`${symbols[address]}`}
                                 reward={rewards}
                                 rewardLabel={symbols[address]}
                                 rewardAmount={data.rewardAmount}
-                            ></DisplayBox>
+                            ></RewardDisplay>
                         </Tooltip>
                     </Grid>
                 );
@@ -65,4 +67,4 @@ const RewardPanel = ({
     )
 }
 
-export default RewardPanel;
+export default RewardDashboard;

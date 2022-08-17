@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
-import TakeProfitDrawer from "./TakeProfitDrawer";
-import TakeProfitDialog from "./TakeProfitDialog";
+import TakeProfitDialog from "../base/TakeProfitDialog";
+import PenroseTakeProfitDrawer from "./PenroseTakeProfitDrawer";
 
-const ProfitButton = ({ web3, account, symbols }) => {
+const PenroseProfitButton = ({ web3, account, symbols }) => {
   const [actionDrawerOpen, setActionDrawerOpen] = useState(false);
   const [actionDialogOpen, setActionDialogOpen] = useState(false);
   const [profitToken, setProfitToken] = useState(null);
@@ -32,27 +32,22 @@ const ProfitButton = ({ web3, account, symbols }) => {
       <Tooltip title="Swaps all DYST and PEN in wallet for selected token">
         <Button onClick={takeProfit} variant="contained">Take Profit</Button>
       </Tooltip>
-      <TakeProfitDrawer anchor="left"
+      <PenroseTakeProfitDrawer
         open={actionDrawerOpen}
-        onClose={toggleDrawer(false)}
-        SlideProps={{
-          direction: "up"
-        }}
-        PaperProps={{
-          sx: {
-              backgroundColor: "#151718",
-              width: "400px",
-              top: "25%"
-          }
-        }}
         web3={web3}
         account={account}
-        token={profitToken}
+        profitToken={profitToken}
         symbols={symbols}
+        onToggerDrawer={toggleDrawer}
       />
-      <TakeProfitDialog open={actionDialogOpen} onClose={onClose} onSubmit={onSubmit}/>
+      <TakeProfitDialog
+        open={actionDialogOpen}
+        onClose={onClose}
+        onSubmit={onSubmit}
+        options={["USDC", "USD+", "WMATIC"]}
+      />
     </>
   )
 }
 
-export default ProfitButton;
+export default PenroseProfitButton;

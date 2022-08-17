@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatAsUsd } from './utils';
+import { formatAsUsd } from '../../utils/utils';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -8,7 +8,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/Box';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { ThemeProvider } from '@mui/material/styles';
-import { accordionTheme } from './styles/accordion-theme';
+import { accordionTheme } from '../../styles/accordion-theme';
 import './table.css';
 
 const LpDashboardSmall = ({ pools, prices, symbols }) => {

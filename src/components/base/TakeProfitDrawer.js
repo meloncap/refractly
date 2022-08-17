@@ -5,21 +5,21 @@ import Drawer from '@mui/material/Drawer';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import ActionIcon, { States } from './ActionIcon';
-import { RouterContract } from "./contracts/RouterContract";
-import { TokenContract } from "./contracts/TokenContract";
-import { dystAddr, penAddr, usdPlusAddr, wmaticAddr } from './addresses';
-import { determineRoute } from './tokenRouter';
+import { RouterContract } from "../../contracts/RouterContract";
+import { TokenContract } from "../../contracts/base/TokenContract";
+import { determineRoute } from '../../utils/tokenRouter';
 
 const TakeProfitDrawer = (props) => {
+  const {web3, account, token, symbols, dexTokenAddr, optimizerTokenAddr, routeThroughTokens, routerContractAddr, ...drawerProps} = props;
   const [states, setStates] = useState({0: States.Pending, 1: States.Pending, 2: States.Pending, 3: States.Pending});
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (props.open && props.web3 && props.account && props.token && props.symbols) {
+    if (drawerProps.open && web3 && account && token && symbols) {
       resetActions();
       runActions();
     }
-  }, [props.open, props.web3, props.account, props.token, props.symbols])
+  }, [drawerProps.open, web3, account, token, symbols])
 
   const modifyState = (index, newStateValue, setStateFn) => {
     setStateFn(previousState => ({ ...previousState, [index]: newStateValue }));
@@ -31,13 +31,13 @@ const TakeProfitDrawer = (props) => {
   }
 
   const runActions = async () => {
-    const contract = new RouterContract(props.web3, props.account);
+    const contract = new RouterContract(web3, account);
     setError(null);
 
-    const toToken = Object.keys(props.symbols).find(key => props.symbols[key] === props.token);
+    const toToken = Object.keys(symbols).find(key => symbols[key] === token);
 
-    await swapToken(contract, dystAddr, toToken, [wmaticAddr, usdPlusAddr], 0, 1);
-    await swapToken(contract, penAddr, toToken, [wmaticAddr, usdPlusAddr], 2, 3);
+    await swapToken(contract, dexTokenAddr, toToken, routeThroughTokens, 0, 1);
+    await swapToken(contract, optimizerTokenAddr, toToken, routeThroughTokens, 2, 3);
   }
 
   const swapToken = async (routerContract, fromToken, toToken, middleTokens, state0, state1) => {
@@ -45,14 +45,14 @@ const TakeProfitDrawer = (props) => {
     try {
       modifyState(state0, States.Running, setStates);
 
-      const tokenContract = new TokenContract(props.web3, fromToken, props.account);
+      const tokenContract = new TokenContract(web3, fromToken, account);
       const balance = await tokenContract.getBalanceOf();
 
       if (balance > 0) {
-        const allowance = await tokenContract.allowance("0xbe75dd16d029c6b32b7ad57a0fd9c1c20dd2862e");
+        const allowance = await tokenContract.allowance(routerContractAddr);
 
         if (allowance < balance) {
-          await tokenContract.approve("0xbe75dd16d029c6b32b7ad57a0fd9c1c20dd2862e");
+          await tokenContract.approve(routerContractAddr);
         }
 
         modifyState(state0, States.Completed, setStates);
@@ -118,9 +118,13 @@ const TakeProfitDrawer = (props) => {
     padding: '0 8px'
   }
 
+  if (!symbols) {
+    return <></>;
+  }
+
   return (
     <Drawer
-      {...props}
+      {...drawerProps}
     >
       <div style={drawerHeader}>
         <IconButton onClick={closeDrawer} variant="contained" size="large" edge="end" sx={{color: "lightgrey" }}>
@@ -129,16 +133,16 @@ const TakeProfitDrawer = (props) => {
       </div>
       <Grid container spacing={2} style={actionGridStyle} direction="column">
         <Grid item>
-          <ActionIcon action="Approve Spending of DYST" index={0} state={states[0]}></ActionIcon>
+          <ActionIcon action={`Approve Spending of ${symbols[dexTokenAddr]}`} index={0} state={states[0]}></ActionIcon>
         </Grid>
         <Grid item>
-          <ActionIcon action={"Swap DYST for " + props.token} index={1} state={states[1]}></ActionIcon>
+          <ActionIcon action={`Swap ${symbols[dexTokenAddr]} for ${token}`} index={1} state={states[1]}></ActionIcon>
         </Grid>
         <Grid item>
-          <ActionIcon action="Approve Spending of PEN" index={2} state={states[2]}></ActionIcon>
+          <ActionIcon action={`Approve Spending of ${symbols[optimizerTokenAddr]}`} index={2} state={states[2]}></ActionIcon>
         </Grid>
         <Grid item>
-          <ActionIcon action={"Swap PEN for " + props.token} index={3} state={states[3]}></ActionIcon>
+          <ActionIcon action={`Swap ${symbols[optimizerTokenAddr]} for ${token}`} index={3} state={states[3]}></ActionIcon>
         </Grid>
         {error ?
         <Grid item>

@@ -1,8 +1,7 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import { formatAsUsd } from './utils';
  
-const DisplayBoxTotal = React.forwardRef((props, ref) => {
+const DisplayBoxContainer = React.forwardRef((props, ref) => {
     const boxStyle={
         display:"flex",
         flexDirection:"column",
@@ -13,7 +12,6 @@ const DisplayBoxTotal = React.forwardRef((props, ref) => {
         borderRadius:"1rem",
         overflow:"hidden",
         maxHeight:"180px",
-        marginBottom:"8px"
     }
 
     const innerBoxStyle={
@@ -28,36 +26,13 @@ const DisplayBoxTotal = React.forwardRef((props, ref) => {
         boxSizing:"border-box"
     }
 
-    const pStyle={
-        color: "#fff",
-        fontSize: "12px",
-        fontWeight: "600",
-        lineHeight: "8px",
-        textTransform: "uppercase",
-        whiteSpace: "nowrap",
-        marginBottom: "2px"
-    }
-
-    const h2Style={
-        display: "flex",
-        color: "transparent",
-        background: "linear-gradient(91.96deg,#88a2ff 5.5%,#fff 57.33%,#ffc6eb 108.26%)",
-        backgroundClip: "text",
-        WebkitBackgroundClip: "text",
-        fontSize: "20px",
-        fontWeight: "700",
-        lineHeight: "51px",
-        margin:"0rem"
-    }
-
     return (
-        <Box {...props} style={boxStyle} ref={ref}>
+        <Box {...props} style={boxStyle} ref={ref} sx={{...props.sx, minWidth: props.width, maxWidth: props.width}}>
             <Box style={innerBoxStyle}>
-                <p style={pStyle}>{props.header}</p>
-                <h2 style={h2Style}>{formatAsUsd(props.value)}</h2>
+                {props.children}
             </Box>
         </Box>
     )
 })
  
-export default DisplayBoxTotal
+export default DisplayBoxContainer

@@ -1,20 +1,22 @@
-import { TokenContract } from "./contracts/TokenContract";
-import { dystAddr, penDystAddr } from "./addresses";
+import { TokenContract } from "../contracts/base/TokenContract";
+import { ChainNames, PolygonAddresses, PolygonTokens } from "./chains";
 
-export const addPrices = async (tokenObj) => {
+export const addPrices = async (tokenObj, chain) => {
     try {
         const addresses = Object.keys(tokenObj).map((address) => address).join();
-        const prices = await fetchPrices(addresses);
+        const prices = await fetchPrices(addresses, chain);
         for (const [address, data] of Object.entries(prices)) {
             const key = Object.keys(tokenObj).find(key => key.toLowerCase() === address)
             tokenObj[key] = data.usd;
         }
 
-        // pendyst is a special case
-        const response = await fetchNoCache(`https://api.dexscreener.com/latest/dex/tokens/${dystAddr}`)
-        const data = await response.json();
-        const pair = data.pairs.find(t => t.baseToken.symbol === 'DYST' && t.quoteToken.symbol === "penDYST");
-        tokenObj[penDystAddr] = Number(pair.priceUsd / pair.priceNative);
+        if (chain === ChainNames.Polygon) {
+            // pendyst is a special case
+            const response = await fetchNoCache(`https://api.dexscreener.com/latest/dex/tokens/${PolygonAddresses.Dyst}`)
+            const data = await response.json();
+            const pair = data.pairs.find(t => t.baseToken.symbol === PolygonTokens.DexToken && t.quoteToken.symbol === PolygonTokens.OptimizerVoteToken);
+            tokenObj[PolygonAddresses.PenDyst] = Number(pair.priceUsd / pair.priceNative);
+        }
 
         // Try and get tokens there we couldn't get a price for
         await getPricesFromDexScreener(tokenObj);
@@ -56,8 +58,8 @@ export const addSymbols = async (web3, tokenObj) => {
     }
 }
 
-const fetchPrices = async (addresses) => {
-    const response = await fetchNoCache(`https://api.coingecko.com/api/v3/simple/token_price/polygon-pos?contract_addresses=${addresses}&vs_currencies=usd`);
+const fetchPrices = async (addresses, chain) => {
+    const response = await fetchNoCache(`https://api.coingecko.com/api/v3/simple/token_price/${chain}?contract_addresses=${addresses}&vs_currencies=usd`);
     const data = await response.json();
     return data;
 }

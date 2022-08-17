@@ -3,8 +3,8 @@ import Button from '@mui/material/Button';
 import Web3 from 'web3';
 import Web3Modal from "web3modal";
 import { ethers } from 'ethers';
-import { providerOptions } from './providerOptions';
-import { truncateAddress } from './utils';
+import { providerOptions } from '../../providerOptions';
+import { truncateAddress } from '../../utils/utils';
 
 const web3Modal = new Web3Modal({
   cacheProvider: true,
@@ -13,7 +13,7 @@ const web3Modal = new Web3Modal({
 });
 
 const ConnectionButton = ({
-  onConnected, onDisconnected, style
+  onConnected, onDisconnected, onChainChanged, style
 }) => {
   const [provider, setProvider] = useState();
   const [account, setAccount] = useState();
@@ -26,15 +26,15 @@ const ConnectionButton = ({
   }, []);
 
   useEffect(() => {
-    if (provider && provider.on) {
+    if (provider && provider.on && onChainChanged) {
       const handleAccountsChanged = (accounts) => {
         console.log("accountsChanged", accounts);
         if (accounts) setAccount(accounts[0]);
       };
 
-      // const handleChainChanged = (_hexChainId) => {
-      //   setChainId(_hexChainId);
-      // };
+      const handleChainChanged = (hexChainId) => {
+        onChainChanged(hexChainId);
+      };
 
       const handleDisconnect = () => {
         console.log("disconnect", error);
@@ -42,31 +42,30 @@ const ConnectionButton = ({
       };
 
       provider.on("accountsChanged", handleAccountsChanged);
-      // provider.on("chainChanged", handleChainChanged);
+      provider.on("chainChanged", handleChainChanged);
       provider.on("disconnect", handleDisconnect);
 
       return () => {
         if (provider.removeListener) {
           provider.removeListener("accountsChanged", handleAccountsChanged);
-          // provider.removeListener("chainChanged", handleChainChanged);
+          provider.removeListener("chainChanged", handleChainChanged);
           provider.removeListener("disconnect", handleDisconnect);
         }
       };
     }
-  }, [provider]);
+  }, [provider, onChainChanged]);
 
   const connectWallet = async () => {
     try {
       const provider = await web3Modal.connect();
       const library = new ethers.providers.Web3Provider(provider);
       const accounts = await library.listAccounts();
-      // const network = await library.getNetwork();
+      const network = await library.getNetwork();
       setProvider(provider);
       if (accounts) setAccount(accounts[0]);
-      // setChainId(network.chainId);
 
       const web3 = new Web3(provider);
-      onConnected(web3, accounts[0]);
+      onConnected(web3, accounts[0], network.chainId);
     } catch (error) {
       setError(error);
     }
@@ -74,12 +73,10 @@ const ConnectionButton = ({
 
   const refreshState = () => {
     setAccount();
-    // setChainId();
-    // setNetwork("");
   };
 
-  const disconnect = async () => {
-    await web3Modal.clearCachedProvider();
+  const disconnect = () => {
+    web3Modal.clearCachedProvider();
     refreshState();
     onDisconnected()
   };

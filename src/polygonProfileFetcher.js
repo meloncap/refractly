@@ -1,12 +1,12 @@
-import { ReadContract } from "./contracts/ReadContract";
-import { TokenContract } from "./contracts/TokenContract";
-import { LPContract } from "./contracts/LPContract";
-import { addPrices, addSymbols } from "./tokenFetcher";
-import { clamAddr, dystAddr, kogeAddr, penAddr, penDystAddr, usdcAddr, usdPlusAddr, vIPenAddr } from "./addresses";
+import { PenroseReadContract } from "./contracts/polygon/PenroseReadContract";
+import { TokenContract } from "./contracts/base/TokenContract";
+import { LPContract } from "./contracts/base/LPContract";
+import { addPrices, addSymbols } from "./utils/tokenFetcher";
+import { ChainNames, PolygonAddresses, PolygonTokens } from "./utils/chains";
 
-export const getProfile = async (web3, account) => {
+export const getPolygonProfile = async (web3, account) => {
     try {
-        const readContract = new ReadContract(web3, account);
+        const readContract = new PenroseReadContract(web3, account);
 
         let balances = [];
 
@@ -41,7 +41,7 @@ export const getProfile = async (web3, account) => {
 
         const rewardTokens = Object.keys(rewards).reduce((a, v) => ({ ...a, [v]: undefined}), {});
         const balanceTokens = Object.keys(combinedBalances).reduce((a, v) => {
-            if(v === "stakedPenDyst") {
+            if(v === PolygonTokens.OptimizerVoteToken) {
                 return a;
             }
             return { ...a, [v]: undefined};
@@ -52,7 +52,7 @@ export const getProfile = async (web3, account) => {
         const tokenSymbolObj = structuredClone(tokenPriceObj);
 
         await Promise.all([
-            addPrices(tokenPriceObj),
+            addPrices(tokenPriceObj, ChainNames.Polygon),
             addSymbols(web3, tokenSymbolObj)
         ]);
 
@@ -71,7 +71,7 @@ export const getProfile = async (web3, account) => {
 }
 
 const getWalletAndStakedBalances = async (web3, account, readContract) => {
-    const tokenContract = new TokenContract(web3, penAddr, account);
+    const tokenContract = new TokenContract(web3, PolygonAddresses.Pen, account);
     const [
         dystBalance,
         penDystBalance,
@@ -79,33 +79,33 @@ const getWalletAndStakedBalances = async (web3, account, readContract) => {
         lockedPenData,
         penBalance
     ] = await Promise.all([
-        readContract.getDystWalletBalance(),
-        readContract.getPenDystWalletBalance(),
-        readContract.getPenDystStakedBalance(),
-        readContract.getLockedPenData(),
+        readContract.getDexTokenWalletBalance(),
+        readContract.getOptimizerTokenWalletBalance(),
+        readContract.getOptimizerTokenStakedBalance(),
+        readContract.getOptimizerLockTokenData(),
         tokenContract.getBalanceOf()
     ]);
 
     let walletAndStakedBalances = {};
-    walletAndStakedBalances[dystAddr] = dystBalance;
-    walletAndStakedBalances[penDystAddr] = penDystBalance + penDystStakedBalance;
-    walletAndStakedBalances[penAddr] = Number(penBalance) + Number(lockedPenData.total);
-    walletAndStakedBalances[vIPenAddr] = Number(lockedPenData.total);
-    walletAndStakedBalances["stakedPenDyst"] = penDystStakedBalance;
+    walletAndStakedBalances[PolygonAddresses.Dyst] = dystBalance;
+    walletAndStakedBalances[PolygonAddresses.PenDyst] = penDystBalance + penDystStakedBalance;
+    walletAndStakedBalances[PolygonAddresses.Pen] = Number(penBalance) + Number(lockedPenData.total);
+    walletAndStakedBalances[PolygonAddresses.VIPen] = Number(lockedPenData.total);
+    walletAndStakedBalances[PolygonTokens.OptimizerVoteToken] = penDystStakedBalance;
 
 
     return walletAndStakedBalances;
 }
 
 const getvIPenRewards = async (contract) => {
-    const result = await contract.getVlPenRewardTokenPositionsOf()
-    const rewards = result.reduce((a, v) => ({ ...a, [v.rewardTokenAddress]: {earned: Number(v.earned), vIPenEarned: Number(v.earned)}}), {});
+    const result = await contract.getOptimizerLockTokenRewards()
+    const rewards = result.reduce((a, v) => ({ ...a, [v.rewardTokenAddress]: {earned: Number(v.earned), optimizerLockEarned: Number(v.earned)}}), {});
     return rewards;
 }
 
 const getPenDystRewards = async (contract) => {
-    const result = await contract.getPenDystRewardPoolPosition();
-    const rewards = result.reduce((a, v) => ({ ...a, [v.rewardTokenAddress]: {earned: Number(v.earned), penDystEarned: Number(v.earned)}}), {});
+    const result = await contract.getOptimizerTokenRewards();
+    const rewards = result.reduce((a, v) => ({ ...a, [v.rewardTokenAddress]: {earned: Number(v.earned), optimizerVoteEarned: Number(v.earned)}}), {});
     return rewards;
 }
 
@@ -141,14 +141,14 @@ const getPoolsPositions = async (contract, web3) => {
 
 
         // handle contract bugs
-        if (token0 === usdcAddr || token0 === usdPlusAddr) {
+        if (token0 === PolygonAddresses.Usdc || token0 === PolygonAddresses.UsdPlus) {
             token0Amount *= 10**12;
-        } else if (token0 === kogeAddr || token0 === clamAddr) {
+        } else if (token0 === PolygonAddresses.Koge || token0 === PolygonAddresses.Clam) {
             token0Amount *= 10**9;
         }
-        if (token1 === usdcAddr || token1 === usdPlusAddr) {
+        if (token1 === PolygonAddresses.Usdc || token1 === PolygonAddresses.UsdPlus) {
             token1Amount *= 10**12;
-        } else if (token1 === kogeAddr || token1 === clamAddr) {
+        } else if (token1 === PolygonAddresses.Koge || token1 === PolygonAddresses.Clam) {
             token1Amount *= 10**9;
         }
 
@@ -193,15 +193,15 @@ const combineRewards = (rewardList) => {
     const combinedRewards = rewardList.reduce((basket, rewards) => {
         for (const [address, rewardData] of Object.entries(rewards)) {
             if (!basket[address]) {
-                basket[address] = {earned: Number(0), vIPenEarned: Number(0), penDystEarned: Number(0), poolEarned: Number(0)};
+                basket[address] = {earned: Number(0), optimizerLockEarned: Number(0), optimizerVoteEarned: Number(0), poolEarned: Number(0)};
             }
     
             basket[address].earned += Number(rewardData.earned);
 
-            if (rewardData.vIPenEarned)
-                basket[address].vIPenEarned += Number(rewardData.vIPenEarned);
-            if (rewardData.penDystEarned)
-                basket[address].penDystEarned += Number(rewardData.penDystEarned);
+            if (rewardData.optimizerLockEarned)
+                basket[address].optimizerLockEarned += Number(rewardData.optimizerLockEarned);
+            if (rewardData.optimizerVoteEarned)
+                basket[address].optimizerVoteEarned += Number(rewardData.optimizerVoteEarned);
             if (rewardData.poolEarned)
                 basket[address].poolEarned += Number(rewardData.poolEarned);
         }

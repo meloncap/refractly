@@ -1,11 +1,10 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
-import DisplayBoxTotal from './DisplayBoxTotal';
-import './Profile.css';
-import { dystAddr, penAddr, vIPenAddr } from './addresses';
+import BalanceDisplay from '../display-boxes/BalanceDisplay';
+import './portfolio.css';
  
-const Profile = ( { balances, rewardData, prices }) => {
+const Portfolio = ( { balances, rewardData, prices, optimizerVoteTokenName, optimizerTokenName, dexTokenAddr, optimizerTokenAddr, optimizerLockTokenAddr, balanceTitle }) => {
     const boxStyle={
         display:"flex",
         flexDirection:"column",
@@ -40,13 +39,13 @@ const Profile = ( { balances, rewardData, prices }) => {
     const diviser = 10 ** 18;
 
     let totalBalance = 0;
-    let stakedPenDyst = 0;
-    let lockedPen = 0;
+    let stakedOptimizerVoteBalance = 0;
+    let optimizerLockBalance = 0;
     if (balances && prices) {
         Object.entries(balances).forEach(balance => {
             const address = balance[0];
 
-            if (address === "stakedPenDyst") {
+            if (address === optimizerVoteTokenName) {
                 return;
             }
 
@@ -54,8 +53,8 @@ const Profile = ( { balances, rewardData, prices }) => {
             totalBalance += data / 10 ** 18 * prices[address];
         });
 
-        stakedPenDyst = balances["stakedPenDyst"] / 10**18 * prices[dystAddr];
-        lockedPen = balances[vIPenAddr] / 10**18 * prices[penAddr];
+        stakedOptimizerVoteBalance = balances[optimizerVoteTokenName] / 10**18 * prices[dexTokenAddr];
+        optimizerLockBalance = balances[optimizerLockTokenAddr] / 10**18 * prices[optimizerTokenAddr];
     }
 
     let earned = 0;
@@ -72,43 +71,35 @@ const Profile = ( { balances, rewardData, prices }) => {
         <Box className="container" style={boxStyle}>
             <Box style={innerBoxStyle}>
                 <p style={pStyle}>My Portfolio</p>
-                <Tooltip title={
-                    <React.Fragment>
-                    Total portfolio balance not including unclaimed rewards<br></br>
-                    This includes:<br></br>
-                    - DYST, PEN, and penDYST in wallet<br></br>
-                    - Staked penDYST and locked PEN<br></br>
-                    - Staked LP balance
-                    </React.Fragment>
-                    
-                }>
-                    <DisplayBoxTotal
+                <Tooltip title={balanceTitle}>
+                    <BalanceDisplay
                         header="Portfolio Value"
                         value={totalBalance}
-                        sx={{minWidth: "276px", maxWidth: "276px"}}
-                    ></DisplayBoxTotal>
+                        width="276px"
+                    ></BalanceDisplay>
                 </Tooltip>
                 <Tooltip title="Rewards that have not been claimed yet">
-                    <DisplayBoxTotal
+                    <BalanceDisplay
                         header="Unclaimed Rewards"
                         value={earned}
-                        sx={{minWidth: "276px", maxWidth: "276px"}}
-                    ></DisplayBoxTotal>
+                        width="276px"
+                    ></BalanceDisplay>
                 </Tooltip>
                 <Box sx={{display: "flex"}}>
-                    <Tooltip title="Staked penDYST balance">
-                        <DisplayBoxTotal
-                            header="Staked penDYST"
-                            value={stakedPenDyst}
-                            sx={{minWidth: "134px", maxWidth: "134px", marginRight: "8px"}}
-                        ></DisplayBoxTotal>
+                    <Tooltip title={`Staked ${optimizerVoteTokenName} balance`}>
+                        <BalanceDisplay
+                            header={`Staked ${optimizerVoteTokenName}`}
+                            value={stakedOptimizerVoteBalance}
+                            width="134px"
+                            sx={{marginRight: "8px"}}
+                        ></BalanceDisplay>
                     </Tooltip>
-                    <Tooltip title="Locked PEN Balance">
-                        <DisplayBoxTotal
-                            header="Locked PEN"
-                            value={lockedPen}
-                            sx={{minWidth: "134px", maxWidth: "134px"}}
-                        ></DisplayBoxTotal>
+                    <Tooltip title={`Locked ${optimizerTokenName} Balance`}>
+                        <BalanceDisplay
+                            header={`Locked ${optimizerTokenName}`}
+                            value={optimizerLockBalance}
+                            width="134px"
+                        ></BalanceDisplay>
                     </Tooltip>
                 </Box>
             </Box>
@@ -116,4 +107,4 @@ const Profile = ( { balances, rewardData, prices }) => {
     )
 }
  
-export default Profile
+export default Portfolio

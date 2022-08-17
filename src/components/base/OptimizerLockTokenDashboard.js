@@ -1,26 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { ReadContract } from './contracts/ReadContract';
-import { penAddr } from './addresses';
-import { formatAsUsd } from './utils';
+import { formatAsUsd } from '../../utils/utils';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import './table.css';
 
-const LockedPenDashboard = ({ account, web3, prices }) => {
+const OptimizerLockTokenDashboard = ({ readContract, prices, optimizeVoteTokenAddr, optimizerTokenName }) => {
   const [lockData, setLockData] = useState([]);
 
   useEffect(() => {
-    if (account && web3 && prices) {
+    if (readContract && prices) {
       getLockData();
     } else {
       setLockData([]);
     }
-  }, [account, web3, prices]);
+  }, [readContract, prices]);
 
   const getLockData = () => {
-    const contract = new ReadContract(web3, account);
-    contract.getLockedPenData()
+    readContract.getOptimizerLockTokenData()
       .then(data => {
         var locks = [];
 
@@ -31,7 +28,7 @@ const LockedPenDashboard = ({ account, web3, prices }) => {
             amount: lock.amount / 10**18,
             unlockTime: lock.unlockTime,
             unlockDate: d,
-            price: prices[penAddr],
+            price: prices[optimizeVoteTokenAddr],
             disabled: d > new Date()
           });
         });
@@ -81,7 +78,7 @@ const LockedPenDashboard = ({ account, web3, prices }) => {
           <Box sx={headerStyle}>
             <Grid container spacing={2} direction="row" justifyContent="center" alignItems="center">
               <Grid item container xs={4} justifyContent="center" alignItems="center">
-                Pen Amount
+                {optimizerTokenName} Amount
               </Grid>
               <Grid item container xs={4} justifyContent="center" alignItems="center">
                 Value
@@ -114,4 +111,4 @@ const LockedPenDashboard = ({ account, web3, prices }) => {
   )
 }
 
-export default LockedPenDashboard;
+export default OptimizerLockTokenDashboard;

@@ -10,8 +10,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import Radio from '@mui/material/Radio';
 
-export default function TakeProfitDialog({ open, onClose, onSubmit }) {
-  const [value, setValue] = useState("USDC");
+export default function TakeProfitDialog({ open, onClose, onSubmit, options }) {
+  const [value, setValue] = useState(options[0]);
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -46,9 +46,9 @@ export default function TakeProfitDialog({ open, onClose, onSubmit }) {
               onChange={handleChange}
               name="radio-buttons-group-profit-token"
           >
-              <FormControlLabel value="USDC" control={<Radio sx={{color: "#1976d2"}} />} label="USDC" />
-              <FormControlLabel value="USD+" control={<Radio sx={{color: "#1976d2"}}/>} label="USD+" />
-              <FormControlLabel value="WMATIC" control={<Radio sx={{color: "#1976d2"}}/>} label="WMATIC" />
+            {options.map((option) => {
+              return <FormControlLabel key={option} value={option} control={<Radio sx={{color: "#1976d2"}} />} label={option} />
+            })}
           </RadioGroup>
           </FormControl>
         </Box>

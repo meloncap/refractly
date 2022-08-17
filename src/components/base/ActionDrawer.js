@@ -7,20 +7,19 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import ActionIcon, { States } from './ActionIcon';
-import { TokenContract } from "./contracts/TokenContract";
-import { WriteContract } from "./contracts/WriteContract";
-import { dystAddr, penDystAddr, penAddr } from './addresses';
+import { TokenContract } from "../../contracts/base/TokenContract";
 
 const ActionDrawer = (props) => {
+  const { web3, account, optimizerTokenName, optimizerVoteTokenName, dexTokenAddr, optimizerTokenAddr, optimizerVoteTokenAddr, writeContract, ...drawerProps } = props;
   const [states, setStates] = useState({0: States.Pending, 1: States.Pending, 2: States.Pending, 3: States.Pending});
   const [actionStates, setActionStates] = useState({0: true, 1: true, 2: true, 3: true});
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (props.open) {
+    if (drawerProps.open) {
       resetActions();
     }
-  }, [props.open])
+  }, [drawerProps.open])
 
   const modifyState = (index, newStateValue, setStateFn) => {
     setStateFn(previousState => ({ ...previousState, [index]: newStateValue }));
@@ -43,13 +42,12 @@ const ActionDrawer = (props) => {
   }
 
   const runActions = async () => {
-    const contract = new WriteContract(props.web3, props.account);
     setError(null);
   
     if (actionStates[0]) {
       try {
         modifyState(0, States.Running, setStates);
-        await contract.claimAll();
+        await writeContract.claimAll();
         modifyState(0, States.Completed, setStates);
       } catch (error) {
         modifyState(0, States.Failed, setStates);
@@ -60,10 +58,10 @@ const ActionDrawer = (props) => {
     if (actionStates[1]) {
       try {
         modifyState(1, States.Running, setStates);
-        const tokenContract = new TokenContract(props.web3, dystAddr, props.account);
-        const dystBalance = await tokenContract.getBalanceOf();
-        if (dystBalance > 0) {
-          await contract.convertDystToPenDystAndStake();
+        const tokenContract = new TokenContract(web3, dexTokenAddr, account);
+        const dexTokenBalance = await tokenContract.getBalanceOf();
+        if (dexTokenBalance > 0) {
+          await writeContract.convertDexTokenToOptimizerVoteTokenAndStake();
           modifyState(1, States.Completed, setStates);
         } else {
           modifyState(1, States.Skipping, setStates);
@@ -77,10 +75,10 @@ const ActionDrawer = (props) => {
     if (actionStates[2]) {
       try {
         modifyState(2, States.Running, setStates);
-        const tokenContract = new TokenContract(props.web3, penDystAddr, props.account);
-        const penDystBalance = await tokenContract.getBalanceOf();
-        if (penDystBalance > 0) {
-          await contract.stakePenDyst();
+        const tokenContract = new TokenContract(web3, optimizerVoteTokenAddr, account);
+        const optimizerVoteTokenBalance = await tokenContract.getBalanceOf();
+        if (optimizerVoteTokenBalance > 0) {
+          await writeContract.stakeOptimizerVoteTokens();
           modifyState(2, States.Completed, setStates);
         } else {
           modifyState(2, States.Skipping, setStates);
@@ -94,10 +92,10 @@ const ActionDrawer = (props) => {
     if (actionStates[3]) {
       try {
         modifyState(3, States.Running, setStates);
-        const tokenContract = new TokenContract(props.web3, penAddr, props.account);
-        const penBalance = await tokenContract.getBalanceOf();
-        if (penBalance > 0) {
-          await contract.voteLockPen(penBalance);
+        const tokenContract = new TokenContract(web3, optimizerTokenAddr, account);
+        const optimizerTokenBalance = await tokenContract.getBalanceOf();
+        if (optimizerTokenBalance > 0) {
+          await writeContract.voteLockOptimizerLockTokens(optimizerTokenBalance);
           modifyState(3, States.Completed, setStates);
         } else {
           modifyState(3, States.Skipping, setStates);
@@ -144,7 +142,7 @@ const ActionDrawer = (props) => {
 
   return (
     <Drawer
-      {...props}
+      {...drawerProps}
     >
       <div style={drawerHeader}>
         <IconButton onClick={closeDrawer} variant="contained" size="large" edge="end" sx={{color: "lightgrey" }}>
@@ -156,13 +154,13 @@ const ActionDrawer = (props) => {
           <ActionIcon action="Claim All Rewards" index={0} state={states[0]} onToggled={handleToggle} switchable></ActionIcon>
         </Grid>
         <Grid item>
-          <ActionIcon action="Convert/Stake penDYST" index={1} state={states[1]} onToggled={handleToggle} switchable></ActionIcon>
+          <ActionIcon action={`Convert/Stake ${optimizerVoteTokenName}`} index={1} state={states[1]} onToggled={handleToggle} switchable></ActionIcon>
         </Grid>
         <Grid item>
-          <ActionIcon action="Stake penDYST" index={2} state={states[2]} onToggled={handleToggle} switchable></ActionIcon>
+          <ActionIcon action={`Stake ${optimizerVoteTokenName}`} index={2} state={states[2]} onToggled={handleToggle} switchable></ActionIcon>
         </Grid>
         <Grid item>
-          <ActionIcon action="Lock PEN" index={3} state={states[3]} onToggled={handleToggle} switchable></ActionIcon>
+          <ActionIcon action={`Lock ${optimizerTokenName}`} index={3} state={states[3]} onToggled={handleToggle} switchable></ActionIcon>
         </Grid>
         <Grid item>
           <Tooltip title="Run pending actions">

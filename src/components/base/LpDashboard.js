@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatAsUsd } from './utils';
+import { formatAsUsd } from '../../utils/utils';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';

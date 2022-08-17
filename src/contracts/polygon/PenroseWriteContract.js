@@ -1,9 +1,9 @@
+import { BaseWriteContract } from '../base/BaseWriteContract';
 import writeContractABI from './write-contract.json';
 
-export class WriteContract {
+export class PenroseWriteContract extends BaseWriteContract {
     constructor(web3, account) {
-        this.account = account;
-        this.contract = new web3.eth.Contract(writeContractABI, "0xc9Ae7Dac956f82074437C6D40f67D6a5ABf3E34b");
+      super(web3, account, "0xc9Ae7Dac956f82074437C6D40f67D6a5ABf3E34b", writeContractABI);
     }
 
     claimAll = async () => {
@@ -38,7 +38,7 @@ export class WriteContract {
       });
     }
 
-    convertDystToPenDystAndStake = async () => {
+    convertDexTokenToOptimizerVoteTokenAndStake = async () => {
         console.log('Start convertDystToPenDystAndStake')
         return new Promise((resolve, reject) => {
             this.contract.methods.convertDystToPenDystAndStake().send({ from: this.account, gasPrice: '35000000000' /* 35 */ })
@@ -54,7 +54,7 @@ export class WriteContract {
         })
       }
     
-      stakePenDyst = async () => {
+      stakeOptimizerVoteTokens = async () => {
         console.log('Start stakePenDyst')
         return new Promise((resolve, reject) => {
             this.contract.methods.stakePenDyst().send({ from: this.account, gasPrice: '35000000000' /* 35 */ })
@@ -70,7 +70,7 @@ export class WriteContract {
         })
       }
     
-      voteLockPen = async (penAmount) => {
+      voteLockOptimizerLockTokens = async (penAmount) => {
         console.log('Start voteLockPen')
         return new Promise((resolve, reject) => {
             this.contract.methods.voteLockPen(penAmount, 0).send({ from: this.account, gasPrice: '40000000000' /* 40 */ })
