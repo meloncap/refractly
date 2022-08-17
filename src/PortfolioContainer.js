@@ -72,26 +72,26 @@ const PortfolioContainer = ({ account, web3, balances, rewards, prices, symbols,
                 <Grid item container spacing={3} sx={{color: "#fff", justifyContent: "center"}}>
                     <Grid item>
                         <Box>
-                            <Box style={priceTitleStyle}>PEN</Box>
+                            <Box style={priceTitleStyle} sx={{paddingLeft: "19px"}}>PEN</Box>
                             <Box><h5 style={pricesStyle}>{formatAsUsd(penPrice, 4)}</h5></Box>
                         </Box>
                     </Grid>
                     <Grid item>
                         <Box>
-                            <Box style={priceTitleStyle}>DYST</Box>
+                            <Box style={priceTitleStyle} sx={{paddingLeft: "16px"}}>DYST</Box>
                             <Box><h5 style={pricesStyle}>{formatAsUsd(dystPrice, 4)}</h5></Box>
                         </Box>
                     </Grid>
                     <Grid item>
                         <Box>
-                            <Box style={priceTitleStyle}>penDYST</Box>
+                            <Box style={priceTitleStyle} sx={{paddingLeft: "1px"}}>penDYST</Box>
                             <Box><h5 style={pricesStyle}>{formatAsUsd(penDystPrice, 4)}</h5></Box>
                         </Box>
                     </Grid>
                     <Grid item>
                         <Box>
                             <Box style={priceTitleStyle}>penDYST:DYST</Box>
-                            <Box><h5 style={pricesStyle}>{DystPenDystRatio.toFixed(2)}</h5></Box>
+                            <Box sx={{paddingLeft:"25px"}}><h5 style={pricesStyle}>{DystPenDystRatio.toFixed(2)}</h5></Box>
                         </Box>
                     </Grid>
                 </Grid>

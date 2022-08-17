@@ -85,14 +85,14 @@ const Profile = ( { balances, rewardData, prices }) => {
                     <DisplayBoxTotal
                         header="Portfolio Value"
                         value={totalBalance}
-                        sx={{minWidth: "270px", maxWidth: "270x"}}
+                        sx={{minWidth: "276px", maxWidth: "276px"}}
                     ></DisplayBoxTotal>
                 </Tooltip>
                 <Tooltip title="Rewards that have not been claimed yet">
                     <DisplayBoxTotal
                         header="Unclaimed Rewards"
                         value={earned}
-                        sx={{minWidth: "270px", maxWidth: "270x"}}
+                        sx={{minWidth: "276px", maxWidth: "276px"}}
                     ></DisplayBoxTotal>
                 </Tooltip>
                 <Box sx={{display: "flex"}}>
@@ -100,14 +100,14 @@ const Profile = ( { balances, rewardData, prices }) => {
                         <DisplayBoxTotal
                             header="Staked penDYST"
                             value={stakedPenDyst}
-                            sx={{minWidth: "131px", maxWidth: "131px", marginRight: "8px"}}
+                            sx={{minWidth: "134px", maxWidth: "134px", marginRight: "8px"}}
                         ></DisplayBoxTotal>
                     </Tooltip>
                     <Tooltip title="Locked PEN Balance">
                         <DisplayBoxTotal
                             header="Locked PEN"
                             value={lockedPen}
-                            sx={{minWidth: "131px", maxWidth: "131px"}}
+                            sx={{minWidth: "134px", maxWidth: "134px"}}
                         ></DisplayBoxTotal>
                     </Tooltip>
                 </Box>
