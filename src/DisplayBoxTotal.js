@@ -34,6 +34,7 @@ const DisplayBoxTotal = React.forwardRef((props, ref) => {
         fontWeight: "600",
         lineHeight: "8px",
         textTransform: "uppercase",
+        whiteSpace: "nowrap",
         marginBottom: "2px"
     }
 
