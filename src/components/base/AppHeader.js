@@ -19,8 +19,6 @@ const AppHeader = ({ onConnected, onDisconnected, onChainChanged, onWalletAddres
     fontFamily: "Titillium"
   }
 
-  const donationAddr = "0x6Fc5567Cd168b5531Abd76Ef61F0ef6cFe020fDE";
-
   return (
     <Box sx={{display: "flex", justifyContent: "space-between", flexGrow: 1}}>
       <div style={headerStyle}>
