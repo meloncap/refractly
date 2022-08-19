@@ -44,7 +44,7 @@ const PenroseProfitButton = ({ web3, account, symbols }) => {
         open={actionDialogOpen}
         onClose={onClose}
         onSubmit={onSubmit}
-        options={["USDC", "USD+", "WMATIC"]}
+        options={["USDC", "USD+", "USDT", "WMATIC"]}
       />
     </>
   )
