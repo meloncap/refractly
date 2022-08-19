@@ -136,7 +136,8 @@ const Donations = ({ blockchain, addresses }) => {
     backgroundColor:"rgba(4,7,31,.8)",
     padding:"8px",
     width:"100%",
-    boxSizing:"border-box"
+    boxSizing:"border-box",
+    color: "0fff"
   }
 
   return (
@@ -146,6 +147,7 @@ const Donations = ({ blockchain, addresses }) => {
           <div ref={container} className="ref-container" style={{ position: 'relative', width: "100%"}}>
             <h2 className="header">If you find Refractly useful, consider donating!</h2>
           </div>
+          <div className="donation-address">Donation Address: {donationAddr}</div>
         </Box>
       </Box>
     </Container>

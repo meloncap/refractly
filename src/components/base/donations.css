@@ -12,6 +12,11 @@
         text-align: center;
         font-size: 15px;
     }
+    .donation-address {
+        color: white;
+        font-size: 12px;
+        text-align: center;
+    }
 }
 
 @media (min-width:401px) {
@@ -20,6 +25,10 @@
         max-height: 598px;
     }
     .header {
+        color: white;
+        text-align: center;
+    }
+    .donation-address {
         color: white;
         text-align: center;
     }
