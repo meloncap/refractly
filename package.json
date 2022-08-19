@@ -5,6 +5,7 @@
   "dependencies": {
     "@alch/alchemy-web3": "^1.4.6",
     "@coinbase/wallet-sdk": "^3.3.0",
+    "@depay/widgets": "^7.15.3",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@mui/icons-material": "^5.8.4",

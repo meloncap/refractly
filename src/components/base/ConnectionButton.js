@@ -5,6 +5,7 @@ import Web3Modal from "web3modal";
 import { ethers } from 'ethers';
 import { providerOptions } from '../../providerOptions';
 import { truncateAddress } from '../../utils/utils';
+import './connection-button.css';
 
 const web3Modal = new Web3Modal({
   cacheProvider: true,
@@ -13,7 +14,7 @@ const web3Modal = new Web3Modal({
 });
 
 const ConnectionButton = ({
-  onConnected, onDisconnected, onChainChanged, style
+  onConnected, onDisconnected, onChainChanged
 }) => {
   const [provider, setProvider] = useState();
   const [account, setAccount] = useState();
@@ -85,9 +86,9 @@ const ConnectionButton = ({
     <div>
       {account
       ?
-      <Button style={style} onClick={disconnect} variant="contained">{truncateAddress(account)}</Button>
+      <Button className="connection-button" onClick={disconnect} variant="contained">{truncateAddress(account)}</Button>
       :
-      <Button style={style} onClick={connectWallet} variant="contained">Connect Wallet</Button>}
+      <Button className="connection-button" onClick={connectWallet} variant="contained">Connect Wallet</Button>}
     </div>
   )
 }

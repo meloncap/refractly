@@ -1,30 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
-import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
-import { ThemeProvider } from '@mui/material/styles';
-import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
-import LockedPenDashboard from './components/polygon/LockedPenDashboard';
-import { tabTheme } from './styles/theme';
-import ConnectionButton from './components/base/ConnectionButton';
+import { BrowserRouter } from 'react-router-dom';
 import { createAlchemyWeb3 } from "@alch/alchemy-web3";
-import { useStickyState } from './utils/useStickyState';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import Web3 from 'web3';
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
-import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
-import { truncateAddress } from './utils/utils';
 import { getPolygonProfile } from './polygonProfileFetcher';
-import LpDashboard from './components/base/LpDashboard';
-import LpDashboardSmall from './components/base/LpDashboardSmall';
-import PenroseRewardDashboard from './components/polygon/PenroseRewardDashboard';
-import PenrosePortfolioContainer from './components/polygon/PenrosePortfolioContainer';
 import { ChainHex } from './utils/chains';
-// import Donations from './Donations';
+import AppHeader from './components/base/AppHeader';
+import PenroseAppBody from './components/polygon/PenroseAppBody';
+import UknownAppBody from './components/bsc/UknownAppBody';
 
 const App = () => {
   const [account, setAccount] = useState(null);
@@ -32,14 +15,11 @@ const App = () => {
   const [web3, setWeb3] = useState(null);
   const [chainId, setChainId] = useState();
   const [actionsDisabled, setActionsDisabled] = useState(true);
-  const [tabValue, setTabValue] = useStickyState(0, "tab");
   const [tokenPrices, setTokenPrices] = useState(null);
   const [tokenSymbols, setTokenSymbols] = useState(null);
   const [pools, setPools] = useState(null);
   const [rewards, setRewards] = useState(null);
   const [balances, setBalances] = useState(null);
-
-  const smallScreen = useMediaQuery('(max-width:700px)');
 
   useEffect(() => {
     if (account && web3) {
@@ -52,6 +32,7 @@ const App = () => {
   const getRewardHandler = async () => {
     getPolygonProfile(web3, account)
       .then(profile => {
+        if (!profile) return;
         setRewards(profile.rewards);
         setBalances(profile.balances);
         setPools(profile.pools);
@@ -113,97 +94,37 @@ const App = () => {
     setTokenSymbols(null);
   }
 
-  const connectionButtonStyle = {
-    width: "200px"
-  }
+  let body = <div></div>
 
-  const addressTextBoxStyle = {
-    backgroundColor: "#1976d2",
-    color: "#fff",
-    width: "225px",
-    height: "36.5px",
-    borderRadius: "4px"
+  if (chainId == ChainHex.BSC) {
+    body = <UknownAppBody />
+  } else {
+    body = <PenroseAppBody
+              web3={web3}
+              account={account}
+              balances={balances}
+              rewards={rewards}
+              pools={pools}
+              prices={tokenPrices}
+              symbols={tokenSymbols}
+              walletConnected={walletConnected}
+              actionsDisabled={actionsDisabled}
+              onRefreshHandler={getRewardHandler}
+            />;
   }
-
-  const headerStyle = {
-    color: "#fff"
-  }
-
-  const tabsStyle = {
-    margin: "16px 0"
-  }
-
-  const handleChange = (_, newValue) => {
-    setTabValue(newValue);
-  }
-
-  const donationAddr = "0x6Fc5567Cd168b5531Abd76Ef61F0ef6cFe020fDE";
 
   return (
     <div className='main-app'>
       <BrowserRouter>
         <React.Fragment>
-          {/* <h3 style={headerStyle}>Refractly</h3> */}
-          <Box sx={{display: "flex", justifyContent: "space-between", flexGrow: 1}}>
-            <div style={headerStyle}>
-              Donations Appreciated: {truncateAddress(donationAddr)}
-              <Tooltip title="Click to copy address">
-                <IconButton onClick={() => navigator.clipboard.writeText(donationAddr)} variant="contained" edge="end" sx={{color: "lightgrey" }}>
-                  <ContentCopyOutlinedIcon />
-                </IconButton>
-              </Tooltip>
-            </div>
-            <Grid container item spacing={1} justifyContent="flex-end" sx={{maxWidth: "500px"}}>
-              <Grid item>
-                {walletConnected ? null :
-                    <TextField style={addressTextBoxStyle} sx={{ input: { color: '#fff' } }} focus="false" id="wallet-input" placeholder="Wallet Address (View Only)" size="small" onChange={onWalletAddressChanged} />
-                }
-              </Grid>
-              <Grid item>
-                <ConnectionButton onConnected={onConnected} onDisconnected={onDisconnected} onChainChanged={onChainChanged} style={connectionButtonStyle} />
-              </Grid>
-            </Grid>
-          </Box>
-          <Grid container spacing={2}>
-            <Grid item xs={12} lg={4}>
-              <PenrosePortfolioContainer
-                web3={web3}
-                account={account}
-                balances={balances}
-                rewards={rewards}
-                prices={tokenPrices}
-                symbols={tokenSymbols}
-                walletConnected={walletConnected}
-                actionsDisabled={actionsDisabled}
-                onRefreshHandler={getRewardHandler}
-              />
-            </Grid>
-            <Grid item container xs={12} lg={8} spacing={2} sx={{marginTop: "16px"}}>
-              <Grid item container xs={12} justifyContent="center">
-                <ThemeProvider theme={tabTheme}>
-                  <Tabs value={tabValue} onChange={handleChange} centered style={tabsStyle}>
-                      <Tab label='Rewards' to='/rewards' component={Link} />
-                      <Tab label='Locked PEN' to='/lockedPen' component={Link} />
-                      <Tab label='LP Positions' to='/pools' component={Link} />
-                      {/* <Tab label='Donate' to='/donate' component={Link} /> */}
-                  </Tabs>
-                </ThemeProvider>
-              </Grid>
-              <Grid item container xs={12}>
-                <Routes>
-                  <Route index element={<PenroseRewardDashboard rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
-                  <Route path="/rewards" element={<PenroseRewardDashboard rewards={rewards} prices={tokenPrices} symbols={tokenSymbols} />} />
-                  <Route path="/lockedPen" element={<LockedPenDashboard account={account} web3={web3} prices={tokenPrices} />} />
-                  {smallScreen ?
-                  <Route path="/pools" element={<LpDashboardSmall pools={pools} prices={tokenPrices} symbols={tokenSymbols}  />} />
-                  :
-                  <Route path="/pools" element={<LpDashboard pools={pools} prices={tokenPrices} symbols={tokenSymbols}  />} />
-                  }
-                  {/* <Route path="/donate" element={<Donations />} /> */}
-                </Routes>
-              </Grid>
-            </Grid>
-          </Grid>
+          <AppHeader
+            onConnected={onConnected}
+            onDisconnected={onDisconnected}
+            onChainChanged={onChainChanged}
+            onWalletAddressChanged={onWalletAddressChanged}
+            walletConnected={walletConnected}
+          />
+          {body}
         </React.Fragment>
       </BrowserRouter>
     </div>

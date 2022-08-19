@@ -1,0 +1,26 @@
+@media (max-width:400px) {
+    .donation-container {
+        min-width: 340px;
+        max-width: 340px;
+    }
+    .ref-container {
+        min-height: 478px;
+        max-height: 478px;
+    }
+    .header {
+        color: white;
+        text-align: center;
+        font-size: 15px;
+    }
+}
+
+@media (min-width:401px) {
+    .ref-container {
+        min-height: 598px;
+        max-height: 598px;
+    }
+    .header {
+        color: white;
+        text-align: center;
+    }
+}

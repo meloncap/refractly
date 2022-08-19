@@ -17,16 +17,16 @@ export const getPolygonProfile = async (web3, account) => {
         let totalRewards = [];
 
         const [
-            vIPenRewards,
+            vlPenRewards,
             penDystRewards,
             { pools, poolBalance, poolRewards }
         ] = await Promise.all([
-            getvIPenRewards(readContract),
+            getvlPenRewards(readContract),
             getPenDystRewards(readContract),
             getPoolsPositions(readContract, web3)
         ]);
 
-        totalRewards.push(vIPenRewards);
+        totalRewards.push(vlPenRewards);
         totalRewards.push(penDystRewards);
         totalRewards.push(poolRewards);
         balances.push(poolBalance);
@@ -90,14 +90,14 @@ const getWalletAndStakedBalances = async (web3, account, readContract) => {
     walletAndStakedBalances[PolygonAddresses.Dyst] = dystBalance;
     walletAndStakedBalances[PolygonAddresses.PenDyst] = penDystBalance + penDystStakedBalance;
     walletAndStakedBalances[PolygonAddresses.Pen] = Number(penBalance) + Number(lockedPenData.total);
-    walletAndStakedBalances[PolygonAddresses.VIPen] = Number(lockedPenData.total);
+    walletAndStakedBalances[PolygonAddresses.VlPen] = Number(lockedPenData.total);
     walletAndStakedBalances[PolygonTokens.OptimizerVoteToken] = penDystStakedBalance;
 
 
     return walletAndStakedBalances;
 }
 
-const getvIPenRewards = async (contract) => {
+const getvlPenRewards = async (contract) => {
     const result = await contract.getOptimizerLockTokenRewards()
     const rewards = result.reduce((a, v) => ({ ...a, [v.rewardTokenAddress]: {earned: Number(v.earned), optimizerLockEarned: Number(v.earned)}}), {});
     return rewards;

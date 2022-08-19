@@ -12,7 +12,7 @@ const PenrosePortfolio = ( { balances, rewardData, prices }) => {
             optimizerTokenName={PolygonTokens.OptimizerToken}
             dexTokenAddr={PolygonAddresses.Dyst}
             optimizerTokenAddr={PolygonAddresses.Pen}
-            optimizerLockTokenAddr={PolygonAddresses.VIPen}
+            optimizerLockTokenAddr={PolygonAddresses.VlPen}
             balanceTitle={
                 <React.Fragment>
                     Total portfolio balance not including unclaimed rewards<br></br>

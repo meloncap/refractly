@@ -9,7 +9,8 @@ export const tabTheme = createTheme({
                 borderRadius: "1rem",
                 margin: "6px",
                 padding: "12px",
-                maxWidth: "700px",
+                maxWidth: "900px",
+                flexWrap: "wrap"
             },
             indicator: {
                 display: "none"
@@ -19,26 +20,33 @@ export const tabTheme = createTheme({
       MuiTab: {
         styleOverrides: {
             root: {
-                '@media (min-width:1023px)': {
+                '@media (min-width:1400px)': {
                     margin: "6px",
-                    // width: "300px",
                     width: "200px",
                     height: "60px",
                     fontSize: "18px",
                     fontWeight: "600px"
                 },
+
+                '@media (max-width:1400px)': {
+                    margin: "6px",
+                    width: "170px",
+                    height: "60px",
+                    fontSize: "18px",
+                    fontWeight: "600px"
+                },
                 '@media (max-width:1023px)': {
-                    width: "180px",
+                    width: "140px",
                     height: "30px",
                     fontSize: "14px"
                 },
                 '@media (max-width:600px)': {
-                    width: "120px",
+                    width: "80px",
                     height: "30px",
                     fontSize: "14px"
                 },
                 '@media (max-width:400px)': {
-                    width: "100px",
+                    width: "40px",
                     height: "25px",
                     fontSize: "12px"
                 },
