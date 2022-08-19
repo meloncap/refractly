@@ -16,6 +16,7 @@
         color: white;
         font-size: 12px;
         text-align: center;
+        margin-top: -41.41px;
     }
 }
 
@@ -31,5 +32,6 @@
     .donation-address {
         color: white;
         text-align: center;
+        margin-top: -41.41px;
     }
 }
