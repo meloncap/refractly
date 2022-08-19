@@ -2,18 +2,24 @@ import React, { useEffect, useRef } from 'react';
 import DePayWidgets from '@depay/widgets';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
-import { PolygonAddresses } from '../../utils/chains';
 import './donations.css';
 
 const donationAddr = "0x6Fc5567Cd168b5531Abd76Ef61F0ef6cFe020fDE";
 
-const Donations = () => {
+const Donations = ({ blockchain, addresses }) => {
   const container = useRef()
 
   let unmount;
 
   useEffect(() => {
-    if (container.current && !unmount) {
+    if (container.current && blockchain && addresses) {
+
+      const whitelistTokens = {
+        [blockchain]: addresses
+      }
+
+      const acceptTokens = addresses.map((address) => {return {blockchain: blockchain, token: address, receiver: donationAddr}});
+
       (
         { unmount } = DePayWidgets.Donation({
           container: container.current,
@@ -22,54 +28,8 @@ const Donations = () => {
             token: true,
             step: 0.00001
           },
-          whitelist: {
-            polygon: [
-              PolygonAddresses.Pen,
-              PolygonAddresses.Dyst,
-              PolygonAddresses.PenDyst,
-              PolygonAddresses.UsdPlus,
-              PolygonAddresses.Usdc,
-              PolygonAddresses.WMatic,
-              PolygonAddresses.Usdt
-            ]
-          },
-          accept:[
-            {
-              blockchain: 'polygon',
-              token: PolygonAddresses.Pen,
-              receiver: donationAddr
-            },
-            {
-              blockchain: 'polygon',
-              token: PolygonAddresses.Dyst,
-              receiver: donationAddr
-            },
-            {
-              blockchain: 'polygon',
-              token: PolygonAddresses.PenDyst,
-              receiver: donationAddr
-            },
-            {
-              blockchain: 'polygon',
-              token: PolygonAddresses.UsdPlus,
-              receiver: donationAddr
-            },
-            {
-              blockchain: 'polygon',
-              token: PolygonAddresses.Usdc,
-              receiver: donationAddr
-            },
-            {
-              blockchain: 'polygon',
-              token: PolygonAddresses.WMatic,
-              receiver: donationAddr
-            },
-            {
-              blockchain: 'polygon',
-              token: PolygonAddresses.Usdt,
-              receiver: donationAddr
-            }
-          ],
+          whitelist: whitelistTokens,
+          accept:acceptTokens,
           style: {
             colors: {
               primary: '#287eff',

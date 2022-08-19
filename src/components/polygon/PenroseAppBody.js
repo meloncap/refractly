@@ -12,7 +12,7 @@ import LpDashboardSmall from '../base/LpDashboardSmall';
 import PenroseRewardDashboard from './PenroseRewardDashboard';
 import PenrosePortfolioContainer from './PenrosePortfolioContainer';
 import AppBody from '../base/AppBody';
-import Donations from '../base/Donations';
+import PenroseDonations from './PenroseDonations';
 
 const PenroseAppBody = ({ web3, account,
   balances,
@@ -71,7 +71,7 @@ const PenroseAppBody = ({ web3, account,
           :
           <Route path="/pools" element={<LpDashboard pools={pools} prices={prices} symbols={symbols}  />} />
           }
-          <Route path="/donate" element={<Donations />} />
+          <Route path="/donate" element={<PenroseDonations />} />
         </Routes>
       }
     />
