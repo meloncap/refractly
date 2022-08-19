@@ -1,11 +1,11 @@
 import React from 'react';
-import { PolygonAddresses } from '../../utils/chains';
+import { ChainNames, PolygonAddresses } from '../../utils/chains';
 import Donations from '../base/Donations';
 
 const PenroseDonations = () => {
   return (
     <Donations
-      blockchain="polygon"
+      blockchain={ChainNames.Polygon}
       addresses={[
         PolygonAddresses.Pen,
         PolygonAddresses.Dyst,

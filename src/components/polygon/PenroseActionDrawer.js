@@ -31,9 +31,9 @@ const PenroseActionDrawer = ({ open, web3, account, onToggerDrawer }) => {
       account={account}
       optimizerTokenName={PolygonTokens.OptimizerToken}
       optimizerVoteTokenName={PolygonTokens.OptimizerVoteToken}
-      dexTokenAddr={PolygonAddresses.DexToken}
-      optimizerTokenAddr={PolygonAddresses.OptimizerToken}
-      optimizerVoteTokenAddr={PolygonAddresses.OptimizerVoteToken}
+      dexTokenAddr={PolygonAddresses.Dyst}
+      optimizerTokenAddr={PolygonAddresses.Pen}
+      optimizerVoteTokenAddr={PolygonAddresses.PenDyst}
       writeContract={contract}
     />
   )

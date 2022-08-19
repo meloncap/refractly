@@ -3,7 +3,7 @@ import OptimizerLockTokenDashboard from '../base/OptimizerLockTokenDashboard';
 import { PenroseReadContract } from '../../contracts/polygon/PenroseReadContract';
 import { PolygonAddresses, PolygonTokens } from '../../utils/chains';
 
-const LockedPenDashboard = ({ web3, account, prices }) => {
+const PenroseOptimizerLockTokenDashboad = ({ web3, account, prices }) => {
   const [readContract, setReadContract] = useState(null);
 
   useEffect(() => {
@@ -24,4 +24,4 @@ const LockedPenDashboard = ({ web3, account, prices }) => {
   )
 }
 
-export default LockedPenDashboard;
+export default PenroseOptimizerLockTokenDashboad;

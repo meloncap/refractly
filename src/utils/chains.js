@@ -1,5 +1,10 @@
 
 export const ChainNames = {
+    Polygon: "polygon",
+    BSC: "bsc"
+}
+
+export const ChainPriceNames = {
     Polygon: "polygon-pos",
     BSC: "bsc"
 }
@@ -27,4 +32,16 @@ export const PolygonTokens = {
     OptimizerToken: "PEN",
     OptimizerVoteToken: "penDYST",
     OptimizerLockToken: "vlPEN"
+}
+
+export const BscAddresses = {
+    Cone: "0xA60205802E1B5C6EC1CAFA3cAcd49dFeECe05AC9",
+    WBnb: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+    Busd: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+    Usdc: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+    Usdt: "0x55d398326f99059fF775485246999027B3197955",
+}
+
+export const BscTokens = {
+    DexToken: "CONE",
 }

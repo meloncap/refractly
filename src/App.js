@@ -25,6 +25,9 @@ const App = () => {
     if (account && web3) {
       if (chainId === ChainHex.Polygon) {
         getRewardHandler();
+      } else if (!walletConnected) {
+        // Handle view only mode right now. Will need to add a select to determine what chain.
+        getRewardHandler();
       }
     }
   }, [account, web3, chainId]);

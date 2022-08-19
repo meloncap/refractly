@@ -5,7 +5,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { Link, Routes, Route } from 'react-router-dom';
 import { useStickyState } from '../../utils/useStickyState';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import LockedPenDashboard from './LockedPenDashboard';
+import PenroseOptimizerLockTokenDashboad from './PenroseOptimizerLockTokenDashboad';
 import { tabTheme } from '../../styles/theme';
 import LpDashboard from '../base/LpDashboard';
 import LpDashboardSmall from '../base/LpDashboardSmall';
@@ -65,7 +65,7 @@ const PenroseAppBody = ({ web3, account,
         <Routes>
           <Route index element={<PenroseRewardDashboard rewards={rewards} prices={prices} symbols={symbols} />} />
           <Route path="/rewards" element={<PenroseRewardDashboard rewards={rewards} prices={prices} symbols={symbols} />} />
-          <Route path="/lockedPen" element={<LockedPenDashboard account={account} web3={web3} prices={prices} />} />
+          <Route path="/lockedPen" element={<PenroseOptimizerLockTokenDashboad account={account} web3={web3} prices={prices} />} />
           {smallScreen ?
           <Route path="/pools" element={<LpDashboardSmall pools={pools} prices={prices} symbols={symbols}  />} />
           :

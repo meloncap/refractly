@@ -2,7 +2,7 @@ import { PenroseReadContract } from "./contracts/polygon/PenroseReadContract";
 import { TokenContract } from "./contracts/base/TokenContract";
 import { LPContract } from "./contracts/base/LPContract";
 import { addPrices, addSymbols } from "./utils/tokenFetcher";
-import { ChainNames, PolygonAddresses, PolygonTokens } from "./utils/chains";
+import { ChainPriceNames, PolygonAddresses, PolygonTokens } from "./utils/chains";
 
 export const getPolygonProfile = async (web3, account) => {
     try {
@@ -52,7 +52,7 @@ export const getPolygonProfile = async (web3, account) => {
         const tokenSymbolObj = structuredClone(tokenPriceObj);
 
         await Promise.all([
-            addPrices(tokenPriceObj, ChainNames.Polygon),
+            addPrices(tokenPriceObj, ChainPriceNames.Polygon),
             addSymbols(web3, tokenSymbolObj)
         ]);
 

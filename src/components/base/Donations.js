@@ -26,7 +26,7 @@ const Donations = ({ blockchain, addresses }) => {
           closable: false,
           amount: {
             token: true,
-            step: 0.00001
+            step: 0.0001
           },
           whitelist: whitelistTokens,
           accept:acceptTokens,

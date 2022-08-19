@@ -1,5 +1,5 @@
 import { TokenContract } from "../contracts/base/TokenContract";
-import { ChainNames, PolygonAddresses, PolygonTokens } from "./chains";
+import { ChainPriceNames, PolygonAddresses, PolygonTokens } from "./chains";
 
 export const addPrices = async (tokenObj, chain) => {
     try {
@@ -10,7 +10,7 @@ export const addPrices = async (tokenObj, chain) => {
             tokenObj[key] = data.usd;
         }
 
-        if (chain === ChainNames.Polygon) {
+        if (chain === ChainPriceNames.Polygon) {
             // pendyst is a special case
             const response = await fetchNoCache(`https://api.dexscreener.com/latest/dex/tokens/${PolygonAddresses.Dyst}`)
             const data = await response.json();
