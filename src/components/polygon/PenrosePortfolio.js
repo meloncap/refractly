@@ -10,8 +10,8 @@ const PenrosePortfolio = ( { balances, rewardData, prices }) => {
             prices={prices}
             optimizerVoteTokenName={PolygonTokens.OptimizerVoteToken}
             optimizerTokenName={PolygonTokens.OptimizerToken}
-            dexTokenAddr={PolygonAddresses.Dyst}
             optimizerTokenAddr={PolygonAddresses.Pen}
+            optimizerVoteTokenAddr={PolygonAddresses.PenDyst}
             optimizerLockTokenAddr={PolygonAddresses.VlPen}
             balanceTitle={
                 <React.Fragment>

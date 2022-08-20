@@ -4,7 +4,7 @@ import Tooltip from '@mui/material/Tooltip';
 import BalanceDisplay from '../display-boxes/BalanceDisplay';
 import './portfolio.css';
  
-const Portfolio = ( { balances, rewardData, prices, optimizerVoteTokenName, optimizerTokenName, dexTokenAddr, optimizerTokenAddr, optimizerLockTokenAddr, balanceTitle }) => {
+const Portfolio = ( { balances, rewardData, prices, optimizerVoteTokenName, optimizerTokenName, optimizerTokenAddr, optimizerVoteTokenAddr, optimizerLockTokenAddr, balanceTitle }) => {
     const boxStyle={
         display:"flex",
         flexDirection:"column",
@@ -53,7 +53,7 @@ const Portfolio = ( { balances, rewardData, prices, optimizerVoteTokenName, opti
             totalBalance += data / 10 ** 18 * prices[address];
         });
 
-        stakedOptimizerVoteBalance = balances[optimizerVoteTokenName] / 10**18 * prices[dexTokenAddr];
+        stakedOptimizerVoteBalance = balances[optimizerVoteTokenName] / 10**18 * prices[optimizerVoteTokenAddr];
         optimizerLockBalance = balances[optimizerLockTokenAddr] / 10**18 * prices[optimizerTokenAddr];
     }
 
